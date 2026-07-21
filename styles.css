@@ -1,0 +1,81 @@
+/* UQTN Navigator Calculator styles */
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #0b1522;
+  color: #e5e9f0;
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 0.5rem;
+}
+
+.card {
+  max-width: 480px;
+  margin: 0 auto;
+  background: #1b2838;
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 6px 8px;
+  margin-top: 4px;
+  border-radius: 4px;
+  border: 1px solid #3b4252;
+  background: #2e3440;
+  color: #e5e9f0;
+}
+
+input[type="number"]:focus {
+  outline: 1px solid #88c0d0;
+  border-color: #88c0d0;
+}
+
+button {
+  margin-top: 14px;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  background: #5e81ac;
+  color: #eceff4;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #81a1c1;
+}
+
+.results {
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px solid #3b4252;
+  font-size: 0.9rem;
+}
+
+.results div {
+  margin: 2px 0;
+}
+
+.state-above { color: #a3be8c; }
+.state-at    { color: #ebcb8b; }
+.state-below { color: #bf616a; }
+.state-none  { color: #d08770; }
+
+small {
+  display: block;
+  margin-top: 4px;
+  color: #d8dee9;
+  font-size: 0.8rem;
+}
