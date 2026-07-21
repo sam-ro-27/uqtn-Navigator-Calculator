@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>UQTN Navigator Calculator</title>
+  <title>Timescout.AI – Navigator Calculator</title>
   <style>
     body {
       font-family: system-ui, sans-serif;
@@ -76,8 +76,11 @@
 </head>
 <body>
   <div class="card">
-    <h1>UQTN Navigator Calculator</h1>
-    <small>MER = (Agency / Resistance) × φ, with φ = 1.618033988749895</small>
+    <h1>Timescout.AI Navigator</h1>
+    <small>
+      MER = (Agency / Resistance) × φ, with φ = 1.618033988749895.
+      Timescout.AI helps you see how much coherent work you can do before fatigue.
+    </small>
 
     <label>
       Environmental energy (0–1)
@@ -101,7 +104,7 @@
       <input type="number" id="res" step="0.01" min="0.01" max="1" value="0.2">
     </label>
 
-    <button type="button" onclick="computeUQTN()">Compute MER & State</button>
+    <button type="button" onclick="computeUQTN()">Compute MER &amp; State</button>
 
     <div class="results" id="results">
       <!-- Filled by JS -->
