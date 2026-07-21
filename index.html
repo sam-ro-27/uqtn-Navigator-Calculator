@@ -2,112 +2,173 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Timescout.AI – Navigator Calculator</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
       font-family: system-ui, sans-serif;
-      background: #0b1522;
+      background: linear-gradient(180deg, #0b1522 0%, #111c2d 100%);
       color: #e5e9f0;
-      padding: 20px;
+      padding: 24px 16px;
     }
-    h1 {
-      margin-bottom: 0.5rem;
-    }
+
     .card {
-      max-width: 480px;
+      max-width: 560px;
       margin: 0 auto;
       background: #1b2838;
-      border-radius: 8px;
-      padding: 16px 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
     }
+
+    h1 {
+      margin: 0 0 0.4rem;
+      font-size: 1.8rem;
+    }
+
+    .subtitle {
+      display: block;
+      margin-top: 4px;
+      color: #d8dee9;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .section-title {
+      margin-top: 18px;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #88c0d0;
+      letter-spacing: 0.02em;
+    }
+
     label {
       display: block;
       margin-top: 10px;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
     }
+
     input[type="number"] {
       width: 100%;
-      padding: 6px 8px;
-      margin-top: 4px;
-      border-radius: 4px;
+      padding: 8px 10px;
+      margin-top: 5px;
+      border-radius: 6px;
       border: 1px solid #3b4252;
       background: #2e3440;
       color: #e5e9f0;
+      font-size: 0.95rem;
     }
+
     input[type="number"]:focus {
       outline: 1px solid #88c0d0;
       border-color: #88c0d0;
     }
+
     button {
-      margin-top: 14px;
+      margin-top: 16px;
       width: 100%;
-      padding: 8px;
+      padding: 10px 12px;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       background: #5e81ac;
       color: #eceff4;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 0.96rem;
       cursor: pointer;
+      transition: background 0.15s ease, transform 0.05s ease;
     }
+
     button:hover {
       background: #81a1c1;
     }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
     .results {
-      margin-top: 16px;
-      padding-top: 8px;
+      margin-top: 18px;
+      padding-top: 12px;
       border-top: 1px solid #3b4252;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
     }
-    .results div {
-      margin: 2px 0;
+
+    .results div,
+    .results p {
+      margin: 6px 0;
     }
+
     .state-above { color: #a3be8c; }
     .state-at    { color: #ebcb8b; }
     .state-below { color: #bf616a; }
     .state-none  { color: #d08770; }
-    small {
-      display: block;
-      margin-top: 4px;
+
+    .tip {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #243447;
       color: #d8dee9;
-      font-size: 0.8rem;
+      line-height: 1.45;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      color: #cfd6e2;
+      font-size: 0.82rem;
+      opacity: 0.9;
     }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>Timescout.AI Navigator</h1>
-    <small>
-      MER = (Agency / Resistance) × φ, with φ = 1.618033988749895.
-      Timescout.AI helps you see how much coherent work you can do before fatigue.
-    </small>
+    <span class="subtitle">
+      MER = (Agency / Resistance) × φ, with φ = 1.618033988749895.<br>
+      Timescout.AI helps you estimate how much coherent work you can do before fatigue.
+    </span>
 
-    <label>
+    <div class="section-title">Navigator energy levels</div>
+
+    <label for="env">
       Environmental energy (0–1)
       <input type="number" id="env" step="0.01" min="0" max="1" value="0.2">
     </label>
-    <label>
+
+    <label for="emo">
       Emotional energy (0–1)
       <input type="number" id="emo" step="0.01" min="0" max="1" value="0.2">
     </label>
-    <label>
+
+    <label for="ment">
       Mental energy (0–1)
       <input type="number" id="ment" step="0.01" min="0" max="1" value="0.2">
     </label>
-    <label>
+
+    <label for="phys">
       Physical energy (0–1)
       <input type="number" id="phys" step="0.01" min="0" max="1" value="0.2">
     </label>
 
-    <label>
+    <div class="section-title">Resistance</div>
+
+    <label for="res">
       Resistance R (0–1, not 0)
       <input type="number" id="res" step="0.01" min="0.01" max="1" value="0.2">
     </label>
 
     <button type="button" onclick="computeUQTN()">Compute MER &amp; State</button>
 
-    <div class="results" id="results">
-      <!-- Filled by JS -->
+    <output class="results" id="results" aria-live="polite"></output>
+
+    <div class="footer-note">
+      Tip: values closer to 1 mean more energy or more resistance, depending on the field.
     </div>
   </div>
 
@@ -124,32 +185,40 @@
       const emo  = clampToNumber(document.getElementById('emo').value);
       const ment = clampToNumber(document.getElementById('ment').value);
       const phys = clampToNumber(document.getElementById('phys').value);
-      let   res  = clampToNumber(document.getElementById('res').value);
+      let res    = clampToNumber(document.getElementById('res').value);
 
-      // basic guard: avoid zero resistance
       if (res <= 0) {
         res = 0.0001;
       }
 
       const agency = env + emo + ment + phys;
-      const mer    = (agency / res) * PHI;
-      const phiThreshold = PHI;
+      const mer = (agency / res) * PHI;
 
       let state = "";
       let cssClass = "";
+      let hint = "";
+      let suggestedTime = "";
 
       if (agency <= 0) {
         state = "no_agency: navigator not active";
         cssClass = "state-none";
-      } else if (mer > phiThreshold) {
+        hint = "No active navigation is happening yet because total agency is zero.";
+        suggestedTime = "Suggested session: begin with a short reset and re-enter values.";
+      } else if (mer > PHI) {
         state = "above_phi: coherent navigation (keep going)";
         cssClass = "state-above";
-      } else if (Math.abs(mer - phiThreshold) < 1e-6) {
+        hint = "Your current energy-to-resistance balance supports clear, steady work.";
+        suggestedTime = "Suggested deep-work session: 3–4 hours.";
+      } else if (Math.abs(mer - PHI) < 1e-6) {
         state = "at_phi: critical threshold (minimum viable momentum)";
         cssClass = "state-at";
+        hint = "You are right at the threshold where momentum is possible but delicate.";
+        suggestedTime = "Suggested session: short focused blocks with breaks.";
       } else {
         state = "below_phi: decoherence + fatigue (delegate or rest)";
         cssClass = "state-below";
+        hint = "Resistance is overpowering available agency, so fatigue is more likely.";
+        suggestedTime = "Suggested session: 1–2 hours max, then rest or delegate.";
       }
 
       const resultsDiv = document.getElementById('results');
@@ -159,10 +228,11 @@
         <div>Phi (φ): <strong>${PHI.toFixed(4)}</strong></div>
         <div>MER = (Agency / R) × φ: <strong>${mer.toFixed(4)}</strong></div>
         <div class="${cssClass}">Coherence state: <strong>${state}</strong></div>
+        <p><em>${hint}</em></p>
+        <div class="tip"><strong>Timescout tip:</strong> ${suggestedTime}</div>
       `;
     }
 
-    // optional: compute once on load with default values
     computeUQTN();
   </script>
 </body>
