@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Timescout.AI – Navigator Calculator</title>
+  <title>Timescout.AI</title>
   <style>
     * {
       box-sizing: border-box;
@@ -14,50 +14,97 @@
       font-family: system-ui, sans-serif;
       background: linear-gradient(180deg, #0b1522 0%, #111c2d 100%);
       color: #e5e9f0;
-      padding: 24px 16px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
 
-    .card {
-      max-width: 560px;
-      margin: 0 auto;
+    .app {
+      width: 100%;
+      max-width: 760px;
+      height: 90vh;
       background: #1b2838;
-      border-radius: 12px;
-      padding: 20px 22px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
-    h1 {
-      margin: 0 0 0.4rem;
-      font-size: 1.8rem;
+    .header {
+      padding: 16px 18px;
+      background: #223247;
+      border-bottom: 1px solid #31445c;
     }
 
-    .subtitle {
-      display: block;
-      margin-top: 4px;
+    .header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .header p {
+      margin: 6px 0 0;
       color: #d8dee9;
       font-size: 0.9rem;
       line-height: 1.4;
     }
 
-    .section-title {
-      margin-top: 18px;
-      margin-bottom: 8px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #88c0d0;
-      letter-spacing: 0.02em;
+    .chatbox {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #162231;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background: #2a3c52;
+      color: #edf2f7;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: #5e81ac;
+      color: #f8fbff;
+    }
+
+    .panel {
+      border-top: 1px solid #31445c;
+      background: #1b2838;
+      padding: 16px 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
     label {
       display: block;
-      margin-top: 10px;
-      font-size: 0.92rem;
+      font-size: 0.88rem;
+      color: #d8dee9;
     }
 
-    input[type="number"] {
+    input[type="number"],
+    input[type="text"] {
       width: 100%;
-      padding: 8px 10px;
       margin-top: 5px;
+      padding: 8px 10px;
       border-radius: 6px;
       border: 1px solid #3b4252;
       background: #2e3440;
@@ -65,110 +112,116 @@
       font-size: 0.95rem;
     }
 
-    input[type="number"]:focus {
+    input:focus {
       outline: 1px solid #88c0d0;
       border-color: #88c0d0;
     }
 
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
     button {
-      margin-top: 16px;
-      width: 100%;
-      padding: 10px 12px;
+      padding: 10px 14px;
       border: none;
       border-radius: 6px;
       background: #5e81ac;
       color: #eceff4;
       font-weight: 700;
-      font-size: 0.96rem;
       cursor: pointer;
-      transition: background 0.15s ease, transform 0.05s ease;
     }
 
     button:hover {
       background: #81a1c1;
     }
 
-    button:active {
-      transform: translateY(1px);
+    .message-row {
+      display: flex;
+      gap: 10px;
     }
 
-    .results {
-      margin-top: 18px;
-      padding-top: 12px;
-      border-top: 1px solid #3b4252;
-      font-size: 0.95rem;
+    .message-row input {
+      flex: 1;
     }
 
-    .results div,
-    .results p {
-      margin: 6px 0;
-    }
-
-    .state-above { color: #a3be8c; }
-    .state-at    { color: #ebcb8b; }
-    .state-below { color: #bf616a; }
-    .state-none  { color: #d08770; }
-
-    .tip {
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      background: #243447;
-      color: #d8dee9;
-      line-height: 1.45;
-    }
-
-    .footer-note {
-      margin-top: 14px;
-      color: #cfd6e2;
+    .small {
       font-size: 0.82rem;
-      opacity: 0.9;
+      color: #b9c4d3;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 700px) {
+      .app {
+        height: 95vh;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .message {
+        max-width: 92%;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Timescout.AI Navigator</h1>
-    <span class="subtitle">
-      MER = (Agency / Resistance) × φ, with φ = 1.618033988749895.<br>
-      Timescout.AI helps you estimate how much coherent work you can do before fatigue.
-    </span>
+  <div class="app">
+    <div class="header">
+      <h1>Timescout.AI</h1>
+      <p>
+        A navigator interface that talks to you about energy, resistance, and coherent work time.
+      </p>
+    </div>
 
-    <div class="section-title">Navigator energy levels</div>
+    <div class="chatbox" id="chatbox" aria-live="polite"></div>
 
-    <label for="env">
-      Environmental energy (0–1)
-      <input type="number" id="env" step="0.01" min="0" max="1" value="0.2">
-    </label>
+    <div class="panel">
+      <div class="grid">
+        <label>
+          Environmental energy
+          <input type="number" id="env" step="0.01" min="0" max="1" value="0.2">
+        </label>
 
-    <label for="emo">
-      Emotional energy (0–1)
-      <input type="number" id="emo" step="0.01" min="0" max="1" value="0.2">
-    </label>
+        <label>
+          Emotional energy
+          <input type="number" id="emo" step="0.01" min="0" max="1" value="0.2">
+        </label>
 
-    <label for="ment">
-      Mental energy (0–1)
-      <input type="number" id="ment" step="0.01" min="0" max="1" value="0.2">
-    </label>
+        <label>
+          Mental energy
+          <input type="number" id="ment" step="0.01" min="0" max="1" value="0.2">
+        </label>
 
-    <label for="phys">
-      Physical energy (0–1)
-      <input type="number" id="phys" step="0.01" min="0" max="1" value="0.2">
-    </label>
+        <label>
+          Physical energy
+          <input type="number" id="phys" step="0.01" min="0" max="1" value="0.2">
+        </label>
 
-    <div class="section-title">Resistance</div>
+        <label>
+          Resistance R
+          <input type="number" id="res" step="0.01" min="0.01" max="1" value="0.2">
+        </label>
 
-    <label for="res">
-      Resistance R (0–1, not 0)
-      <input type="number" id="res" step="0.01" min="0.01" max="1" value="0.2">
-    </label>
+        <label>
+          Your message to Timescout
+          <input type="text" id="userInput" placeholder="Ask: How am I doing right now?">
+        </label>
+      </div>
 
-    <button type="button" onclick="computeUQTN()">Compute MER &amp; State</button>
+      <div class="actions">
+        <button type="button" onclick="analyzeState()">Analyze my state</button>
+        <button type="button" onclick="sendMessage()">Send message</button>
+        <button type="button" onclick="resetChat()">Reset chat</button>
+      </div>
 
-    <output class="results" id="results" aria-live="polite"></output>
-
-    <div class="footer-note">
-      Tip: values closer to 1 mean more energy or more resistance, depending on the field.
+      <div class="small">
+        MER = (Agency / Resistance) × φ, with φ = 1.618033988749895
+      </div>
     </div>
   </div>
 
@@ -180,12 +233,21 @@
       return isNaN(v) ? 0 : v;
     }
 
-    function computeUQTN() {
-      const env  = clampToNumber(document.getElementById('env').value);
-      const emo  = clampToNumber(document.getElementById('emo').value);
-      const ment = clampToNumber(document.getElementById('ment').value);
-      const phys = clampToNumber(document.getElementById('phys').value);
-      let res    = clampToNumber(document.getElementById('res').value);
+    function addMessage(text, sender) {
+      const chatbox = document.getElementById("chatbox");
+      const message = document.createElement("div");
+      message.className = `message ${sender}`;
+      message.textContent = text;
+      chatbox.appendChild(message);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    function getStateData() {
+      const env = clampToNumber(document.getElementById("env").value);
+      const emo = clampToNumber(document.getElementById("emo").value);
+      const ment = clampToNumber(document.getElementById("ment").value);
+      const phys = clampToNumber(document.getElementById("phys").value);
+      let res = clampToNumber(document.getElementById("res").value);
 
       if (res <= 0) {
         res = 0.0001;
@@ -195,45 +257,109 @@
       const mer = (agency / res) * PHI;
 
       let state = "";
-      let cssClass = "";
-      let hint = "";
-      let suggestedTime = "";
+      let advice = "";
 
       if (agency <= 0) {
-        state = "no_agency: navigator not active";
-        cssClass = "state-none";
-        hint = "No active navigation is happening yet because total agency is zero.";
-        suggestedTime = "Suggested session: begin with a short reset and re-enter values.";
+        state = "no_agency";
+        advice = "You are not actively navigating yet. Start small and build momentum.";
       } else if (mer > PHI) {
-        state = "above_phi: coherent navigation (keep going)";
-        cssClass = "state-above";
-        hint = "Your current energy-to-resistance balance supports clear, steady work.";
-        suggestedTime = "Suggested deep-work session: 3–4 hours.";
+        state = "above_phi";
+        advice = "You are above phi. This is a strong state for coherent work and deep focus.";
       } else if (Math.abs(mer - PHI) < 1e-6) {
-        state = "at_phi: critical threshold (minimum viable momentum)";
-        cssClass = "state-at";
-        hint = "You are right at the threshold where momentum is possible but delicate.";
-        suggestedTime = "Suggested session: short focused blocks with breaks.";
+        state = "at_phi";
+        advice = "You are at the threshold. Work carefully and use shorter focus blocks.";
       } else {
-        state = "below_phi: decoherence + fatigue (delegate or rest)";
-        cssClass = "state-below";
-        hint = "Resistance is overpowering available agency, so fatigue is more likely.";
-        suggestedTime = "Suggested session: 1–2 hours max, then rest or delegate.";
+        state = "below_phi";
+        advice = "You are below phi. Fatigue or decoherence is more likely, so rest or reduce load.";
       }
 
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = `
-        <div>Agency (sum of domains): <strong>${agency.toFixed(4)}</strong></div>
-        <div>Resistance R: <strong>${res.toFixed(4)}</strong></div>
-        <div>Phi (φ): <strong>${PHI.toFixed(4)}</strong></div>
-        <div>MER = (Agency / R) × φ: <strong>${mer.toFixed(4)}</strong></div>
-        <div class="${cssClass}">Coherence state: <strong>${state}</strong></div>
-        <p><em>${hint}</em></p>
-        <div class="tip"><strong>Timescout tip:</strong> ${suggestedTime}</div>
-      `;
+      return { env, emo, ment, phys, res, agency, mer, state, advice };
     }
 
-    computeUQTN();
+    function analyzeState() {
+      const data = getStateData();
+
+      let suggestedTime = "";
+      if (data.state === "above_phi") {
+        suggestedTime = "Suggested session: 3 to 4 hours of deep work.";
+      } else if (data.state === "at_phi") {
+        suggestedTime = "Suggested session: 30 to 60 minute focus blocks.";
+      } else if (data.state === "below_phi") {
+        suggestedTime = "Suggested session: 1 to 2 hours maximum, then step away.";
+      } else {
+        suggestedTime = "Suggested session: reset first, then try a short 15 minute start.";
+      }
+
+      const response =
+`Here is your Timescout reading:
+
+Agency: ${data.agency.toFixed(4)}
+Resistance: ${data.res.toFixed(4)}
+Phi: ${PHI.toFixed(4)}
+MER: ${data.mer.toFixed(4)}
+State: ${data.state}
+
+${data.advice}
+${suggestedTime}`;
+
+      addMessage(response, "bot");
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      addMessage(text, "user");
+      input.value = "";
+
+      const data = getStateData();
+      const lower = text.toLowerCase();
+
+      let reply = "";
+
+      if (lower.includes("how am i doing") || lower.includes("status") || lower.includes("state")) {
+        reply = `Right now your MER is ${data.mer.toFixed(4)} and your state is ${data.state}. ${data.advice}`;
+      } else if (lower.includes("study") || lower.includes("work")) {
+        if (data.state === "above_phi") {
+          reply = "Yes — this looks like a good time for focused study or project work.";
+        } else if (data.state === "at_phi") {
+          reply = "You can still work, but keep it short and deliberate.";
+        } else {
+          reply = "You may want to lighten the load first. Your current state suggests fatigue risk.";
+        }
+      } else if (lower.includes("rest") || lower.includes("break")) {
+        if (data.state === "below_phi") {
+          reply = "A break would be a smart move right now.";
+        } else {
+          reply = "A short break could help, but you still have workable momentum.";
+        }
+      } else if (lower.includes("explain mer")) {
+        reply = "MER means Motivational Energy Reserve. In this app, it is calculated as (Agency / Resistance) × phi.";
+      } else {
+        reply = `I heard you. Based on your current inputs, your MER is ${data.mer.toFixed(4)} and your state is ${data.state}. ${data.advice}`;
+      }
+
+      addMessage(reply, "bot");
+    }
+
+    function resetChat() {
+      const chatbox = document.getElementById("chatbox");
+      chatbox.innerHTML = "";
+      addMessage(
+        "Hello, I’m Timescout.AI. I can read your current energy and resistance levels, then talk to you about your work state. Press 'Analyze my state' or send me a message.",
+        "bot"
+      );
+    }
+
+    document.getElementById("userInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    });
+
+    resetChat();
   </script>
 </body>
 </html>
