@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UQTN Navigator Calculator</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0b1522;
+      color: #e5e9f0;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 0.5rem;
+    }
+    .card {
+      max-width: 480px;
+      margin: 0 auto;
+      background: #1b2838;
+      border-radius: 8px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 6px 8px;
+      margin-top: 4px;
+      border-radius: 4px;
+      border: 1px solid #3b4252;
+      background: #2e3440;
+      color: #e5e9f0;
+    }
+    input[type="number"]:focus {
+      outline: 1px solid #88c0d0;
+      border-color: #88c0d0;
+    }
+    button {
+      margin-top: 14px;
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      background: #5e81ac;
+      color: #eceff4;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #81a1c1;
+    }
+    .results {
+      margin-top: 16px;
+      padding-top: 8px;
+      border-top: 1px solid #3b4252;
+      font-size: 0.9rem;
+    }
+    .results div {
+      margin: 2px 0;
+    }
+    .state-above { color: #a3be8c; }
+    .state-at    { color: #ebcb8b; }
+    .state-below { color: #bf616a; }
+    .state-none  { color: #d08770; }
+    small {
+      display: block;
+      margin-top: 4px;
+      color: #d8dee9;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>UQTN Navigator Calculator</h1>
+    <small>MER = (Agency / Resistance) × φ, with φ = 1.618033988749895</small>
+
+    <label>
+      Environmental energy (0–1)
+      <input type="number" id="env" step="0.01" min="0" max="1" value="0.2">
+    </label>
+    <label>
+      Emotional energy (0–1)
+      <input type="number" id="emo" step="0.01" min="0" max="1" value="0.2">
+    </label>
+    <label>
+      Mental energy (0–1)
+      <input type="number" id="ment" step="0.01" min="0" max="1" value="0.2">
+    </label>
+    <label>
+      Physical energy (0–1)
+      <input type="number" id="phys" step="0.01" min="0" max="1" value="0.2">
+    </label>
+
+    <label>
+      Resistance R (0–1, not 0)
+      <input type="number" id="res" step="0.01" min="0.01" max="1" value="0.2">
+    </label>
+
+    <button type="button" onclick="computeUQTN()">Compute MER & State</button>
+
+    <div class="results" id="results">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <script>
+    const PHI = 1.618033988749895;
+
+    function clampToNumber(x) {
+      const v = Number(x);
+      return isNaN(v) ? 0 : v;
+    }
+
+    function computeUQTN() {
+      const env  = clampToNumber(document.getElementById('env').value);
+      const emo  = clampToNumber(document.getElementById('emo').value);
+      const ment = clampToNumber(document.getElementById('ment').value);
+      const phys = clampToNumber(document.getElementById('phys').value);
+      let   res  = clampToNumber(document.getElementById('res').value);
+
+      // basic guard: avoid zero resistance
+      if (res <= 0) {
+        res = 0.0001;
+      }
+
+      const agency = env + emo + ment + phys;
+      const mer    = (agency / res) * PHI;
+      const phiThreshold = PHI;
+
+      let state = "";
+      let cssClass = "";
+
+      if (agency <= 0) {
+        state = "no_agency: navigator not active";
+        cssClass = "state-none";
+      } else if (mer > phiThreshold) {
+        state = "above_phi: coherent navigation (keep going)";
+        cssClass = "state-above";
+      } else if (Math.abs(mer - phiThreshold) < 1e-6) {
+        state = "at_phi: critical threshold (minimum viable momentum)";
+        cssClass = "state-at";
+      } else {
+        state = "below_phi: decoherence + fatigue (delegate or rest)";
+        cssClass = "state-below";
+      }
+
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = `
+        <div>Agency (sum of domains): <strong>${agency.toFixed(4)}</strong></div>
+        <div>Resistance R: <strong>${res.toFixed(4)}</strong></div>
+        <div>Phi (φ): <strong>${PHI.toFixed(4)}</strong></div>
+        <div>MER = (Agency / R) × φ: <strong>${mer.toFixed(4)}</strong></div>
+        <div class="${cssClass}">Coherence state: <strong>${state}</strong></div>
+      `;
+    }
+
+    // optional: compute once on load with default values
+    computeUQTN();
+  </script>
+</body>
+</html>
