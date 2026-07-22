@@ -199,10 +199,10 @@
         </label>
 
         <div class="sidebar-buttons">
-          <button onclick="runCommand('status report')">Status report</button>
-          <button class="ghost-btn" onclick="runCommand('save state')">Save state</button>
-          <button class="ghost-btn" onclick="runCommand('load state')">Load state</button>
-          <button class="ghost-btn" onclick="runCommand('reset inputs')">Reset inputs</button>
+          <button onclick="handleButtonClick('status report')">Status report</button>
+          <button class="ghost-btn" onclick="handleButtonClick('save state')">Save state</button>
+          <button class="ghost-btn" onclick="handleButtonClick('load state')">Load state</button>
+          <button class="ghost-btn" onclick="handleButtonClick('reset inputs')">Reset inputs</button>
         </div>
 
         <div class="status-box" id="statusBox">
@@ -230,6 +230,9 @@
 
   <script>
     const PHI = 1.618033988749895;
+    // Update this coordinate to target your active platform processor
+    const BACKEND_URL = "http://127.0.0.1:5000/api/chat"; 
+    
     let recognition = null;
     let isListening = false;
 
@@ -397,56 +400,63 @@ ${data.advice}`;
 - set resistance to 0.3`;
     }
 
-    function runCommand(rawText) {
+    async function runCommand(rawText) {
       const text = rawText.toLowerCase().trim();
 
       const setReply = setFieldByCommand(text);
-      if (setReply) {
-        return setReply;
-      }
-
-      if (text.includes("status")) {
-        return buildStatusReport();
-      }
-
-      if (text.includes("save")) {
-        return saveState();
-      }
-
-      if (text.includes("load")) {
-        return loadState();
-      }
-
-      if (text.includes("reset")) {
-        return resetInputs();
-      }
-
-      if (text.includes("help") || text.includes("what can you do")) {
-        return helpText();
-      }
+      if (setReply) return setReply;
+      
+      if (text.includes("status")) return buildStatusReport();
+      if (text.includes("save")) return saveState();
+      if (text.includes("load")) return loadState();
+      if (text.includes("reset")) return resetInputs();
+      if (text.includes("help") || text.includes("what can you do")) return helpText();
 
       if (text.includes("study") || text.includes("work")) {
         const data = computeState();
         updateStatusBox(data);
-        if (data.state === "above_phi") {
-          return "Yes. Your current state supports focused work.";
-        }
-        if (data.state === "at_phi") {
-          return "You can work, but use shorter focus blocks.";
-        }
+        if (data.state === "above_phi") return "Yes. Your current state supports focused work.";
+        if (data.state === "at_phi") return "You can work, but use shorter focus blocks.";
         return "You may want to reduce the load or rest first.";
       }
 
+      // --- Backend-Aware Fallback Initialization ---
       const data = computeState();
       updateStatusBox(data);
+      
+      try {
+        const response = await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: rawText, state: data })
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result && result.reply) {
+            return result.reply;
+          }
+        }
+      } catch (error) {
+        console.warn("Backend unavailable. Defaulting to local structural response.", error);
+      }
+
+      // Final fallback if the bridge to the API is closed
       return `I understood your message, but I do not have a dedicated command for it yet.
 Current MER: ${data.mer.toFixed(4)}
 Current state: ${data.stateLabel}
 
-Type help to see what I can do.`;
+Type help to see what I can do. (Backend offline)`;
     }
 
-    function sendMessage() {
+    async function handleButtonClick(command) {
+      addMessage(command, "user");
+      const reply = await runCommand(command);
+      addMessage(reply, "bot");
+      speakText(reply);
+    }
+
+    async function sendMessage() {
       const input = document.getElementById("userInput");
       const text = input.value.trim();
       if (!text) return;
@@ -454,7 +464,7 @@ Type help to see what I can do.`;
       addMessage(text, "user");
       input.value = "";
 
-      const reply = runCommand(text);
+      const reply = await runCommand(text);
       addMessage(reply, "bot");
       speakText(reply);
     }
@@ -474,10 +484,10 @@ Type help to see what I can do.`;
         document.getElementById("micBtn").textContent = "🎙️ Listening...";
       };
 
-      recog.onresult = function (event) {
+      recog.onresult = async function (event) {
         const transcript = event.results[0][0].transcript;
         addMessage(transcript, "user");
-        const reply = runCommand(transcript);
+        const reply = await runCommand(transcript);
         addMessage(reply, "bot");
         speakText(reply);
       };
