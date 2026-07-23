@@ -148,9 +148,9 @@
       line-height: 1.4;
     }
     .state-above { color: #a3be8c; }
-    .state-at    { color: #ebcb8b; }
+    .state-at { color: #ebcb8b; }
     .state-below { color: #bf616a; }
-    .state-none  { color: #d08770; }
+    .state-none { color: #d08770; }
 
     @media (max-width: 860px) {
       .main { grid-template-columns: 1fr; }
@@ -229,10 +229,13 @@
   </div>
 
   <script>
+    window.TIMESCOUT_API_BASE = "http://127.0.0.1:8000";
+  </script>
+
+  <script>
     const PHI = 1.618033988749895;
-    // Update this coordinate to target your active platform processor
-    const BACKEND_URL = "http://127.0.0.1:5000/api/chat"; 
-    
+    const BACKEND_URL = `${window.TIMESCOUT_API_BASE}/api/respond`;
+
     let recognition = null;
     let isListening = false;
 
@@ -405,7 +408,7 @@ ${data.advice}`;
 
       const setReply = setFieldByCommand(text);
       if (setReply) return setReply;
-      
+
       if (text.includes("status")) return buildStatusReport();
       if (text.includes("save")) return saveState();
       if (text.includes("load")) return loadState();
@@ -420,17 +423,16 @@ ${data.advice}`;
         return "You may want to reduce the load or rest first.";
       }
 
-      // --- Backend-Aware Fallback Initialization ---
       const data = computeState();
       updateStatusBox(data);
-      
+
       try {
         const response = await fetch(BACKEND_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: rawText, state: data })
         });
-        
+
         if (response.ok) {
           const result = await response.json();
           if (result && result.reply) {
@@ -441,7 +443,6 @@ ${data.advice}`;
         console.warn("Backend unavailable. Defaulting to local structural response.", error);
       }
 
-      // Final fallback if the bridge to the API is closed
       return `I understood your message, but I do not have a dedicated command for it yet.
 Current MER: ${data.mer.toFixed(4)}
 Current state: ${data.stateLabel}
