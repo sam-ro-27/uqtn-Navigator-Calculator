@@ -1,0 +1,5 @@
+CURRENT_FOCUS=microsized memory recall algorithm
+CURRENT_BUILD=lightweight recall layer for session continuity
+CURRENT_METHOD=field-layer first, domain translation second
+CURRENT_TARGETS=UQTN preservation, AI collaboration, cross-domain application
+OPEN_QUESTION=How to maximize recall with minimal storage
