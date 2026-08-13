@@ -4,8 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Timescout.AI</title>
+
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: system-ui, sans-serif;
@@ -17,55 +21,80 @@
       align-items: center;
       padding: 20px;
     }
+
     .app {
       width: 100%;
       max-width: 860px;
       height: 92vh;
       background: #1b2838;
       border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
+
     .header {
       padding: 16px 18px;
       background: #223247;
       border-bottom: 1px solid #31445c;
     }
-    .header h1 { margin: 0; font-size: 1.4rem; }
-    .header p { margin: 6px 0 0; color: #d8dee9; font-size: 0.9rem; }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      color: #d8dee9;
+      font-size: 0.9rem;
+    }
+
     .main {
       display: grid;
       grid-template-columns: 320px 1fr;
       flex: 1;
       min-height: 0;
     }
+
     .sidebar {
       border-right: 1px solid #31445c;
       padding: 16px;
       background: #1a2635;
       overflow-y: auto;
     }
+
     .chat-area {
       display: flex;
       flex-direction: column;
       min-height: 0;
       background: #162231;
     }
+
     .section-title {
       margin: 0 0 10px;
       font-size: 0.95rem;
       font-weight: 700;
       color: #88c0d0;
     }
+
+    .mode-status {
+      margin-bottom: 12px;
+      color: #a3be8c;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
     label {
       display: block;
       margin-top: 10px;
       font-size: 0.88rem;
       color: #d8dee9;
     }
-    input[type="number"], input[type="text"] {
+
+    input[type="number"],
+    input[type="text"] {
       width: 100%;
       margin-top: 5px;
       padding: 9px 10px;
@@ -75,15 +104,18 @@
       color: #e5e9f0;
       font-size: 0.95rem;
     }
+
     input:focus {
       outline: 1px solid #88c0d0;
       border-color: #88c0d0;
     }
+
     .sidebar-buttons {
       display: grid;
       gap: 10px;
       margin-top: 14px;
     }
+
     button {
       padding: 10px 12px;
       border: none;
@@ -93,10 +125,23 @@
       font-weight: 700;
       cursor: pointer;
     }
-    button:hover { background: #81a1c1; }
-    .ghost-btn { background: #35485f; }
-    .ghost-btn:hover { background: #48627f; }
-    .mic-btn.listening { background: #bf616a; }
+
+    button:hover {
+      background: #81a1c1;
+    }
+
+    .ghost-btn {
+      background: #35485f;
+    }
+
+    .ghost-btn:hover {
+      background: #48627f;
+    }
+
+    .mic-btn.listening {
+      background: #bf616a;
+    }
+
     .status-box {
       margin-top: 14px;
       padding: 10px 12px;
@@ -106,6 +151,14 @@
       font-size: 0.85rem;
       line-height: 1.45;
     }
+
+    .status-note {
+      margin-top: 10px;
+      color: #b9c4d3;
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
     .chatbox {
       flex: 1;
       overflow-y: auto;
@@ -114,6 +167,7 @@
       flex-direction: column;
       gap: 12px;
     }
+
     .message {
       max-width: 82%;
       padding: 12px 14px;
@@ -121,39 +175,59 @@
       line-height: 1.5;
       white-space: pre-wrap;
     }
+
     .bot {
       align-self: flex-start;
       background: #2a3c52;
       color: #edf2f7;
     }
+
     .user {
       align-self: flex-end;
       background: #5e81ac;
       color: #f8fbff;
     }
+
     .composer {
       border-top: 1px solid #31445c;
       padding: 14px 16px;
       background: #1b2838;
     }
+
     .input-row {
       display: grid;
       grid-template-columns: 1fr auto auto;
       gap: 10px;
     }
+
     .note {
       margin-top: 8px;
       font-size: 0.8rem;
       color: #b9c4d3;
       line-height: 1.4;
     }
-    .state-above { color: #a3be8c; }
-    .state-at { color: #ebcb8b; }
-    .state-below { color: #bf616a; }
-    .state-none { color: #d08770; }
+
+    .state-above {
+      color: #a3be8c;
+    }
+
+    .state-at {
+      color: #ebcb8b;
+    }
+
+    .state-below {
+      color: #bf616a;
+    }
+
+    .state-none {
+      color: #d08770;
+    }
 
     @media (max-width: 860px) {
-      .main { grid-template-columns: 1fr; }
+      .main {
+        grid-template-columns: 1fr;
+      }
+
       .sidebar {
         border-right: none;
         border-bottom: 1px solid #31445c;
@@ -161,12 +235,21 @@
     }
 
     @media (max-width: 600px) {
-      .app { height: 96vh; }
-      .message { max-width: 92%; }
-      .input-row { grid-template-columns: 1fr; }
+      .app {
+        height: 96vh;
+      }
+
+      .message {
+        max-width: 92%;
+      }
+
+      .input-row {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="app">
     <div class="header">
@@ -178,35 +261,58 @@
       <div class="sidebar">
         <h2 class="section-title">Navigator inputs</h2>
 
-        <label>Environmental energy
+        <div class="mode-status">
+          Autonomous local calculation active
+        </div>
+
+        <label for="env">
+          Environmental energy
           <input type="number" id="env" step="0.01" min="0" max="1" value="0.2">
         </label>
 
-        <label>Emotional energy
+        <label for="emo">
+          Emotional energy
           <input type="number" id="emo" step="0.01" min="0" max="1" value="0.2">
         </label>
 
-        <label>Mental energy
+        <label for="ment">
+          Mental energy
           <input type="number" id="ment" step="0.01" min="0" max="1" value="0.2">
         </label>
 
-        <label>Physical energy
+        <label for="phys">
+          Physical energy
           <input type="number" id="phys" step="0.01" min="0" max="1" value="0.2">
         </label>
 
-        <label>Resistance R
+        <label for="res">
+          Resistance R
           <input type="number" id="res" step="0.01" min="0.01" max="1" value="0.2">
         </label>
 
         <div class="sidebar-buttons">
-          <button onclick="handleButtonClick('status report')">Status report</button>
-          <button class="ghost-btn" onclick="handleButtonClick('save state')">Save state</button>
-          <button class="ghost-btn" onclick="handleButtonClick('load state')">Load state</button>
-          <button class="ghost-btn" onclick="handleButtonClick('reset inputs')">Reset inputs</button>
+          <button type="button" onclick="handleButtonClick('status report')">
+            Status report
+          </button>
+
+          <button type="button" class="ghost-btn" onclick="handleButtonClick('save state')">
+            Save state
+          </button>
+
+          <button type="button" class="ghost-btn" onclick="handleButtonClick('load state')">
+            Load state
+          </button>
+
+          <button type="button" class="ghost-btn" onclick="handleButtonClick('reset inputs')">
+            Reset inputs
+          </button>
         </div>
 
-        <div class="status-box" id="statusBox">
-          MER = (Agency / Resistance) × φ, with φ = 1.618033988749895
+        <div class="status-box" id="statusBox"></div>
+
+        <div class="status-note">
+          The values update locally from conversation content and session interaction.
+          No cloud API or API key is required.
         </div>
       </div>
 
@@ -215,13 +321,32 @@
 
         <div class="composer">
           <div class="input-row">
-            <input type="text" id="userInput" placeholder="Try: status report, save state, set mental energy to 0.8">
-            <button type="button" class="mic-btn" id="micBtn" onclick="toggleVoiceInput()">🎤 Speak</button>
-            <button type="button" onclick="sendMessage()">Send</button>
+            <input
+              type="text"
+              id="userInput"
+              placeholder="Tell Navigator how you are doing or what you want to work on"
+            >
+
+            <button
+              type="button"
+              class="mic-btn"
+              id="micBtn"
+              onclick="toggleVoiceInput()"
+            >
+              🎤 Speak
+            </button>
+
+            <button
+              type="button"
+              onclick="sendMessage()"
+            >
+              Send
+            </button>
           </div>
+
           <div class="note">
             Commands: status report, save state, load state, reset inputs, help,
-            set environmental energy to 0.6, set resistance to 0.3
+            hi, yes, how about now, are you working, and natural work-state messages.
           </div>
         </div>
       </div>
@@ -229,290 +354,402 @@
   </div>
 
   <script>
-    window.TIMESCOUT_API_BASE = "http://127.0.0.1:8000";
-  </script>
+    "use strict";
 
-  <script>
-    const PHI = 1.618033988749895;
-    const BACKEND_URL = `${window.TIMESCOUT_API_BASE}/api/respond`;
-
+    const STORAGE_KEY = "timescout_autonomous_state";
     let recognition = null;
     let isListening = false;
 
-    function clampToNumber(x) {
-      const v = Number(x);
-      return isNaN(v) ? 0 : v;
+    function getElement(id) {
+      return document.getElementById(id);
+    }
+
+    function clamp(value, minimum = 0, maximum = 1) {
+      const number = Number(value);
+
+      if (!Number.isFinite(number)) {
+        return minimum;
+      }
+
+      return Math.min(maximum, Math.max(minimum, number));
     }
 
     function addMessage(text, sender) {
-      const chatbox = document.getElementById("chatbox");
+      const chatbox = getElement("chatbox");
       const message = document.createElement("div");
+
       message.className = `message ${sender}`;
       message.textContent = text;
+
       chatbox.appendChild(message);
       chatbox.scrollTop = chatbox.scrollHeight;
     }
 
     function speakText(text) {
-      if (!("speechSynthesis" in window)) return;
+      if (!("speechSynthesis" in window)) {
+        return;
+      }
+
       const utterance = new SpeechSynthesisUtterance(text);
+
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);
     }
 
     function getInputs() {
       return {
-        env: clampToNumber(document.getElementById("env").value),
-        emo: clampToNumber(document.getElementById("emo").value),
-        ment: clampToNumber(document.getElementById("ment").value),
-        phys: clampToNumber(document.getElementById("phys").value),
-        res: Math.max(clampToNumber(document.getElementById("res").value), 0.0001)
+        env: clamp(getElement("env").value),
+        emo: clamp(getElement("emo").value),
+        ment: clamp(getElement("ment").value),
+        phys: clamp(getElement("phys").value),
+        res: clamp(getElement("res").value, 0.01, 1)
       };
     }
 
     function setInputs(data) {
-      document.getElementById("env").value = data.env ?? 0.2;
-      document.getElementById("emo").value = data.emo ?? 0.2;
-      document.getElementById("ment").value = data.ment ?? 0.2;
-      document.getElementById("phys").value = data.phys ?? 0.2;
-      document.getElementById("res").value = data.res ?? 0.2;
+      getElement("env").value = clamp(data.env ?? 0.2);
+      getElement("emo").value = clamp(data.emo ?? 0.2);
+      getElement("ment").value = clamp(data.ment ?? 0.2);
+      getElement("phys").value = clamp(data.phys ?? 0.2);
+      getElement("res").value = clamp(data.res ?? 0.2, 0.01, 1);
     }
 
     function computeState() {
-      const { env, emo, ment, phys, res } = getInputs();
-      const agency = env + emo + ment + phys;
-      const mer = (agency / res) * PHI;
+      const inputs = getInputs();
+      const agency =
+        inputs.env +
+        inputs.emo +
+        inputs.ment +
+        inputs.phys;
 
-      let state = "";
-      let stateLabel = "";
-      let cssClass = "";
-      let advice = "";
+      const mer = agency / Math.max(inputs.res, 0.0001);
+
+      let state;
+      let stateLabel;
+      let cssClass;
+      let advice;
 
       if (agency <= 0) {
         state = "no_agency";
         stateLabel = "Navigator not active";
         cssClass = "state-none";
-        advice = "No active navigation is happening yet.";
-      } else if (mer > PHI) {
+        advice = "No active navigation is detected.";
+      } else if (mer >= 1) {
         state = "above_phi";
-        stateLabel = "Above phi";
+        stateLabel = "Hyper-Resonant";
         cssClass = "state-above";
-        advice = "You are in a coherent state for focused work.";
-      } else if (Math.abs(mer - PHI) < 1e-6) {
-        state = "at_phi";
-        stateLabel = "At phi threshold";
-        cssClass = "state-at";
-        advice = "You are right at the threshold.";
+        advice = "Your current state supports focused work.";
       } else {
         state = "below_phi";
-        stateLabel = "Below phi";
+        stateLabel = "Entropic";
         cssClass = "state-below";
-        advice = "Fatigue or decoherence is more likely right now.";
+        advice = "Resistance is currently dominant. Consider reducing load or taking a break.";
       }
 
-      return { env, emo, ment, phys, res, agency, mer, state, stateLabel, cssClass, advice };
+      return {
+        ...inputs,
+        agency,
+        mer,
+        state,
+        stateLabel,
+        cssClass,
+        advice
+      };
     }
 
     function updateStatusBox(data) {
-      document.getElementById("statusBox").innerHTML = `
+      getElement("statusBox").innerHTML = `
         Agency: <strong>${data.agency.toFixed(4)}</strong><br>
         Resistance: <strong>${data.res.toFixed(4)}</strong><br>
         MER: <strong>${data.mer.toFixed(4)}</strong><br>
-        State: <strong class="${data.cssClass}">${data.stateLabel}</strong>
+        State:
+        <strong class="${data.cssClass}">
+          ${data.stateLabel}
+        </strong>
       `;
     }
 
     function saveState() {
-      const data = getInputs();
-      localStorage.setItem("timescout_state", JSON.stringify(data));
-      return "I saved your current navigator state locally in this browser.";
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(getInputs())
+      );
+
+      return "I saved the current Navigator state locally in this browser.";
     }
 
     function loadState() {
-      const raw = localStorage.getItem("timescout_state");
-      if (!raw) {
-        return "I could not find a saved state yet.";
+      const savedState = localStorage.getItem(STORAGE_KEY);
+
+      if (!savedState) {
+        return "I could not find a saved Navigator state.";
       }
-      const data = JSON.parse(raw);
-      setInputs(data);
-      const state = computeState();
-      updateStatusBox(state);
-      return "I loaded your last saved navigator state.";
+
+      try {
+        setInputs(JSON.parse(savedState));
+        return buildStatusReport("I loaded the saved Navigator state.");
+      } catch (error) {
+        console.error(error);
+        return "The saved Navigator state could not be read.";
+      }
     }
 
     function resetInputs() {
-      setInputs({ env: 0.2, emo: 0.2, ment: 0.2, phys: 0.2, res: 0.2 });
-      const state = computeState();
-      updateStatusBox(state);
-      return "I reset the inputs to the default values.";
+      setInputs({
+        env: 0.2,
+        emo: 0.2,
+        ment: 0.2,
+        phys: 0.2,
+        res: 0.2
+      });
+
+      updateStatusBox(computeState());
+
+      return "I reset the Navigator state to its baseline.";
     }
 
-    function setFieldByCommand(text) {
-      const patterns = [
-        { key: "env", names: ["environmental energy", "environment energy", "environment"] },
-        { key: "emo", names: ["emotional energy", "emotion", "emotional"] },
-        { key: "ment", names: ["mental energy", "mental"] },
-        { key: "phys", names: ["physical energy", "physical"] },
-        { key: "res", names: ["resistance", "resistance r"] }
-      ];
-
-      for (const field of patterns) {
-        for (const name of field.names) {
-          const regex = new RegExp(`set ${name} to ([0-9]*\\.?[0-9]+)`);
-          const match = text.match(regex);
-          if (match) {
-            let value = parseFloat(match[1]);
-            if (field.key === "res") {
-              value = Math.min(Math.max(value, 0.01), 1);
-            } else {
-              value = Math.min(Math.max(value, 0), 1);
-            }
-            document.getElementById(field.key).value = value;
-            const state = computeState();
-            updateStatusBox(state);
-            return `I set ${name} to ${value.toFixed(2)}.`;
-          }
-        }
-      }
-      return null;
-    }
-
-    function buildStatusReport() {
+    function buildStatusReport(prefix = "Local autonomous Navigator is active.") {
       const data = computeState();
+
       updateStatusBox(data);
-      return `Status report:
+
+      return `${prefix}
+
 Agency: ${data.agency.toFixed(4)}
 Resistance: ${data.res.toFixed(4)}
-Phi: ${PHI.toFixed(4)}
 MER: ${data.mer.toFixed(4)}
 State: ${data.stateLabel}
 
 ${data.advice}`;
     }
 
+    function adjustStateFromMessage(message) {
+      const text = message.toLowerCase();
+      const state = getInputs();
+
+      const positiveSignals = [
+        "focused",
+        "focus",
+        "ready",
+        "good",
+        "great",
+        "calm",
+        "confident",
+        "productive",
+        "clear",
+        "motivated",
+        "working",
+        "coherent"
+      ];
+
+      const negativeSignals = [
+        "tired",
+        "fatigue",
+        "stressed",
+        "stress",
+        "confused",
+        "blocked",
+        "sad",
+        "angry",
+        "anxious",
+        "overwhelmed",
+        "distracted",
+        "exhausted",
+        "cannot",
+        "can't",
+        "hard",
+        "difficult"
+      ];
+
+      const positive = positiveSignals.some(signal => text.includes(signal));
+      const negative = negativeSignals.some(signal => text.includes(signal));
+
+      if (positive) {
+        state.env += 0.02;
+        state.emo += 0.04;
+        state.ment += 0.05;
+        state.phys += 0.02;
+        state.res -= 0.03;
+      }
+
+      if (negative) {
+        state.env -= 0.01;
+        state.emo -= 0.04;
+        state.ment -= 0.06;
+        state.phys -= 0.03;
+        state.res += 0.05;
+      }
+
+      if (
+        text.includes("rest") ||
+        text.includes("break") ||
+        text.includes("pause")
+      ) {
+        state.res -= 0.05;
+        state.ment += 0.02;
+        state.phys += 0.02;
+      }
+
+      setInputs({
+        env: clamp(state.env),
+        emo: clamp(state.emo),
+        ment: clamp(state.ment),
+        phys: clamp(state.phys),
+        res: clamp(state.res, 0.01, 1)
+      });
+    }
+
     function helpText() {
-      return `Here are some things I can do right now:
+      return `I calculate Navigator state locally from your interaction.
+
+Available commands:
 - status report
 - save state
 - load state
 - reset inputs
-- set environmental energy to 0.6
-- set emotional energy to 0.7
-- set mental energy to 0.8
-- set physical energy to 0.5
-- set resistance to 0.3`;
+- hi
+- hello
+- yes
+- how about now
+- are you working
+
+You can also describe your condition or work state, such as:
+- I am focused and ready to work
+- I am tired and distracted
+- I need a break`;
     }
 
-    async function runCommand(rawText) {
+    function runCommand(rawText) {
       const text = rawText.toLowerCase().trim();
 
-      const setReply = setFieldByCommand(text);
-      if (setReply) return setReply;
-
-      if (text.includes("status")) return buildStatusReport();
-      if (text.includes("save")) return saveState();
-      if (text.includes("load")) return loadState();
-      if (text.includes("reset")) return resetInputs();
-      if (text.includes("help") || text.includes("what can you do")) return helpText();
-
-      if (text.includes("study") || text.includes("work")) {
-        const data = computeState();
-        updateStatusBox(data);
-        if (data.state === "above_phi") return "Yes. Your current state supports focused work.";
-        if (data.state === "at_phi") return "You can work, but use shorter focus blocks.";
-        return "You may want to reduce the load or rest first.";
+      if (
+        text === "hi" ||
+        text === "hello" ||
+        text === "hey" ||
+        text === "yes" ||
+        text.includes("how about now") ||
+        text.includes("are you working")
+      ) {
+        return buildStatusReport();
       }
 
-      const data = computeState();
-      updateStatusBox(data);
-
-      try {
-        const response = await fetch(BACKEND_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: rawText, state: data })
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          if (result && result.reply) {
-            return result.reply;
-          }
-        }
-      } catch (error) {
-        console.warn("Backend unavailable. Defaulting to local structural response.", error);
+      if (
+        text.includes("help") ||
+        text.includes("what can you do")
+      ) {
+        return helpText();
       }
 
-      return `I understood your message, but I do not have a dedicated command for it yet.
-Current MER: ${data.mer.toFixed(4)}
-Current state: ${data.stateLabel}
+      if (text.includes("status")) {
+        return buildStatusReport();
+      }
 
-Type help to see what I can do. (Backend offline)`;
+      if (text.includes("save")) {
+        return saveState();
+      }
+
+      if (text.includes("load")) {
+        return loadState();
+      }
+
+      if (text.includes("reset")) {
+        return resetInputs();
+      }
+
+      adjustStateFromMessage(rawText);
+
+      return buildStatusReport(
+        "I updated the local Navigator state from your message."
+      );
     }
 
-    async function handleButtonClick(command) {
+    function handleButtonClick(command) {
       addMessage(command, "user");
-      const reply = await runCommand(command);
+
+      const reply = runCommand(command);
+
       addMessage(reply, "bot");
       speakText(reply);
     }
 
-    async function sendMessage() {
-      const input = document.getElementById("userInput");
+    function sendMessage() {
+      const input = getElement("userInput");
       const text = input.value.trim();
-      if (!text) return;
+
+      if (!text) {
+        return;
+      }
 
       addMessage(text, "user");
       input.value = "";
 
-      const reply = await runCommand(text);
+      const reply = runCommand(text);
+
       addMessage(reply, "bot");
       speakText(reply);
     }
 
-    function initVoiceRecognition() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) return null;
+    function initializeVoiceRecognition() {
+      const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
 
-      const recog = new SpeechRecognition();
-      recog.continuous = false;
-      recog.interimResults = false;
-      recog.lang = "en-US";
+      if (!SpeechRecognition) {
+        return null;
+      }
 
-      recog.onstart = function () {
+      const recognizer = new SpeechRecognition();
+
+      recognizer.continuous = false;
+      recognizer.interimResults = false;
+      recognizer.lang = "en-US";
+
+      recognizer.onstart = function () {
         isListening = true;
-        document.getElementById("micBtn").classList.add("listening");
-        document.getElementById("micBtn").textContent = "🎙️ Listening...";
+
+        getElement("micBtn").classList.add("listening");
+        getElement("micBtn").textContent = "🎙️ Listening...";
       };
 
-      recog.onresult = async function (event) {
-        const transcript = event.results[0][0].transcript;
+      recognizer.onresult = function (event) {
+        const transcript =
+          event.results[0][0].transcript;
+
         addMessage(transcript, "user");
-        const reply = await runCommand(transcript);
+
+        const reply = runCommand(transcript);
+
         addMessage(reply, "bot");
         speakText(reply);
       };
 
-      recog.onerror = function () {
-        addMessage("Microphone input failed. Please try again or type instead.", "bot");
+      recognizer.onerror = function () {
+        addMessage(
+          "Microphone input failed. Please type instead.",
+          "bot"
+        );
       };
 
-      recog.onend = function () {
+      recognizer.onend = function () {
         isListening = false;
-        document.getElementById("micBtn").classList.remove("listening");
-        document.getElementById("micBtn").textContent = "🎤 Speak";
+
+        getElement("micBtn").classList.remove("listening");
+        getElement("micBtn").textContent = "🎤 Speak";
       };
 
-      return recog;
+      return recognizer;
     }
 
     function toggleVoiceInput() {
       if (!recognition) {
-        recognition = initVoiceRecognition();
+        recognition = initializeVoiceRecognition();
       }
 
       if (!recognition) {
-        addMessage("Voice recognition is not supported here. Please type your command instead.", "bot");
+        addMessage(
+          "Voice recognition is not supported here. Please type instead.",
+          "bot"
+        );
         return;
       }
 
@@ -523,17 +760,30 @@ Type help to see what I can do. (Backend offline)`;
       }
     }
 
-    document.getElementById("userInput").addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        sendMessage();
+    getElement("userInput").addEventListener(
+      "keydown",
+      function (event) {
+        if (event.key === "Enter") {
+          sendMessage();
+        }
       }
-    });
+    );
 
     function boot() {
-      const data = computeState();
-      updateStatusBox(data);
+      const savedState = localStorage.getItem(STORAGE_KEY);
+
+      if (savedState) {
+        try {
+          setInputs(JSON.parse(savedState));
+        } catch (error) {
+          console.error("Saved state could not be loaded.", error);
+        }
+      }
+
+      updateStatusBox(computeState());
+
       addMessage(
-        "Hello, I’m Timescout.AI. I can analyze your state, save and load it, reset inputs, and change values from chat commands. Type help to see commands.",
+        "Hello, I’m Timescout.AI. Autonomous local UQTN calculation is active. Tell me how you are doing or what you want to work on.",
         "bot"
       );
     }
