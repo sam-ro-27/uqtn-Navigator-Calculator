@@ -6,32 +6,30 @@
   <title>Aion.AI</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: system-ui, sans-serif;
-      background: linear-gradient(180deg, #0b1522 0%, #111c2d 100%);
-      color: #e5e9f0;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #0b1522, #111c2d);
+      color: #e5e9f0;
+      font-family: system-ui, sans-serif;
     }
 
     .app {
       width: 100%;
       max-width: 860px;
       height: 92vh;
-      background: #1b2838;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      border-radius: 16px;
+      background: #1b2838;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
     }
 
     .header {
@@ -48,7 +46,7 @@
     .header p {
       margin: 6px 0 0;
       color: #d8dee9;
-      font-size: 0.9rem;
+      font-size: .9rem;
     }
 
     .main {
@@ -59,10 +57,10 @@
     }
 
     .sidebar {
-      border-right: 1px solid #31445c;
       padding: 16px;
-      background: #1a2635;
       overflow-y: auto;
+      background: #1a2635;
+      border-right: 1px solid #31445c;
     }
 
     .chat-area {
@@ -74,40 +72,57 @@
 
     .section-title {
       margin: 0 0 10px;
-      font-size: 0.95rem;
-      font-weight: 700;
       color: #88c0d0;
+      font-size: .95rem;
     }
 
     .mode-status {
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       color: #a3be8c;
-      font-size: 0.82rem;
+      font-size: .82rem;
       font-weight: 700;
     }
 
-    label {
-      display: block;
-      margin-top: 10px;
-      font-size: 0.88rem;
-      color: #d8dee9;
+    .state-grid {
+      display: grid;
+      gap: 8px;
     }
 
-    input[type="number"],
-    input[type="text"] {
-      width: 100%;
-      margin-top: 5px;
+    .state-card {
       padding: 9px 10px;
-      border-radius: 6px;
-      border: 1px solid #3b4252;
+      border-radius: 7px;
       background: #2e3440;
-      color: #e5e9f0;
-      font-size: 0.95rem;
+      border: 1px solid #3b4252;
     }
 
-    input:focus {
-      outline: 1px solid #88c0d0;
-      border-color: #88c0d0;
+    .state-card small {
+      display: block;
+      color: #b9c4d3;
+      font-size: .75rem;
+    }
+
+    .state-card strong {
+      display: block;
+      margin-top: 2px;
+      color: #e5e9f0;
+      font-size: .95rem;
+    }
+
+    .status-box {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #243447;
+      color: #d8dee9;
+      font-size: .85rem;
+      line-height: 1.5;
+    }
+
+    .status-note {
+      margin-top: 10px;
+      color: #b9c4d3;
+      font-size: .78rem;
+      line-height: 1.4;
     }
 
     .sidebar-buttons {
@@ -118,10 +133,10 @@
 
     button {
       padding: 10px 12px;
-      border: none;
+      border: 0;
       border-radius: 6px;
       background: #5e81ac;
-      color: #eceff4;
+      color: #fff;
       font-weight: 700;
       cursor: pointer;
     }
@@ -140,23 +155,6 @@
 
     .mic-btn.listening {
       background: #bf616a;
-    }
-
-    .status-box {
-      margin-top: 14px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      background: #243447;
-      color: #d8dee9;
-      font-size: 0.85rem;
-      line-height: 1.45;
-    }
-
-    .status-note {
-      margin-top: 10px;
-      color: #b9c4d3;
-      font-size: 0.78rem;
-      line-height: 1.4;
     }
 
     .chatbox {
@@ -179,19 +177,17 @@
     .bot {
       align-self: flex-start;
       background: #2a3c52;
-      color: #edf2f7;
     }
 
     .user {
       align-self: flex-end;
       background: #5e81ac;
-      color: #f8fbff;
     }
 
     .composer {
-      border-top: 1px solid #31445c;
       padding: 14px 16px;
       background: #1b2838;
+      border-top: 1px solid #31445c;
     }
 
     .input-row {
@@ -200,28 +196,31 @@
       gap: 10px;
     }
 
+    input[type="text"] {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid #3b4252;
+      border-radius: 6px;
+      background: #2e3440;
+      color: #e5e9f0;
+      font-size: .95rem;
+    }
+
+    input:focus {
+      outline: 1px solid #88c0d0;
+      border-color: #88c0d0;
+    }
+
     .note {
       margin-top: 8px;
-      font-size: 0.8rem;
       color: #b9c4d3;
+      font-size: .8rem;
       line-height: 1.4;
     }
 
-    .state-above {
-      color: #a3be8c;
-    }
-
-    .state-at {
-      color: #ebcb8b;
-    }
-
-    .state-below {
-      color: #bf616a;
-    }
-
-    .state-none {
-      color: #d08770;
-    }
+    .state-above { color: #a3be8c; }
+    .state-below { color: #bf616a; }
+    .state-none { color: #d08770; }
 
     @media (max-width: 860px) {
       .main {
@@ -229,7 +228,7 @@
       }
 
       .sidebar {
-        border-right: none;
+        border-right: 0;
         border-bottom: 1px solid #31445c;
       }
     }
@@ -239,12 +238,12 @@
         height: 96vh;
       }
 
-      .message {
-        max-width: 92%;
-      }
-
       .input-row {
         grid-template-columns: 1fr;
+      }
+
+      .message {
+        max-width: 92%;
       }
     }
   </style>
@@ -252,43 +251,53 @@
 
 <body>
   <div class="app">
-    <div class="header">
+    <header class="header">
       <h1>Aion.AI</h1>
-      <p>A navigator assistant for energy, resistance, and coherent work time.</p>
-    </div>
+      <p>
+        A local autonomous UQTN Navigator for virtual state interpretation
+        and coherent work time.
+      </p>
+    </header>
 
-    <div class="main">
-      <div class="sidebar">
-        <h2 class="section-title">Navigator inputs</h2>
+    <main class="main">
+      <aside class="sidebar">
+        <h2 class="section-title">Navigator state</h2>
 
         <div class="mode-status">
           Autonomous local calculation active
         </div>
 
-        <label for="env">
-          Environmental energy
-          <input type="number" id="env" step="0.01" min="0" max="1" value="0.2">
-        </label>
+        <div class="state-grid">
+          <div class="state-card">
+            <small>Environmental</small>
+            <strong id="envValue">0.200</strong>
+          </div>
 
-        <label for="emo">
-          Emotional energy
-          <input type="number" id="emo" step="0.01" min="0" max="1" value="0.2">
-        </label>
+          <div class="state-card">
+            <small>Emotional</small>
+            <strong id="emoValue">0.200</strong>
+          </div>
 
-        <label for="ment">
-          Mental energy
-          <input type="number" id="ment" step="0.01" min="0" max="1" value="0.2">
-        </label>
+          <div class="state-card">
+            <small>Mental</small>
+            <strong id="mentValue">0.200</strong>
+          </div>
 
-        <label for="phys">
-          Physical energy
-          <input type="number" id="phys" step="0.01" min="0" max="1" value="0.2">
-        </label>
+          <div class="state-card">
+            <small>Physical</small>
+            <strong id="physValue">0.200</strong>
+          </div>
 
-        <label for="res">
-          Resistance R
-          <input type="number" id="res" step="0.01" min="0.01" max="1" value="0.2">
-        </label>
+          <div class="state-card">
+            <small>Resistance</small>
+            <strong id="resValue">0.200</strong>
+          </div>
+
+          <div class="state-card">
+            <small>Virtual state vector</small>
+            <strong id="vectorValue">(0.200, 0.200, 0.200)</strong>
+          </div>
+        </div>
 
         <div class="sidebar-buttons">
           <button type="button" onclick="handleButtonClick('status report')">
@@ -303,66 +312,64 @@
             Load state
           </button>
 
-          <button type="button" class="ghost-btn" onclick="handleButtonClick('reset inputs')">
-            Reset inputs
+          <button type="button" class="ghost-btn" onclick="handleButtonClick('reset state')">
+            Reset state
           </button>
         </div>
 
-        <div class="status-box" id="statusBox"></div>
+        <div id="statusBox" class="status-box"></div>
 
         <div class="status-note">
-          The values update locally from conversation content and session interaction.
-          No cloud API or API key is required. No Cloud API keys are needed. All calculations are performed in the Temporal ocean.
+          Aion.AI interprets the user's text or voice locally, separates
+          the message into environmental, emotional, mental, and physical
+          dimensions, then calculates the virtual state.
+          No cloud API key is required.
         </div>
-      </div>
+      </aside>
 
-      <div class="chat-area">
-        <div class="chatbox" id="chatbox" aria-live="polite"></div>
+      <section class="chat-area">
+        <div id="chatbox" class="chatbox" aria-live="polite"></div>
 
         <div class="composer">
           <div class="input-row">
             <input
-              type="text"
               id="userInput"
-              placeholder="Tell Navigator how you are doing or what you want to work on"
+              type="text"
+              placeholder="Tell Aion.AI how you are feeling or what you are working on"
             >
 
             <button
+              id="micBtn"
               type="button"
               class="mic-btn"
-              id="micBtn"
               onclick="toggleVoiceInput()"
             >
               🎤 Speak
             </button>
 
-            <button
-              type="button"
-              onclick="sendMessage()"
-            >
+            <button type="button" onclick="sendMessage()">
               Send
             </button>
           </div>
 
           <div class="note">
-            Commands: status report, save state, load state, reset inputs, help,
-            hi, yes, how about now, are you working, and natural work-state messages.
+            Natural language and voice input update the virtual state locally.
+            Commands: status report, save state, load state, reset state, help.
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   </div>
 
   <script>
     "use strict";
 
     const STORAGE_KEY = "aion_autonomous_state";
+
     let recognition = null;
     let isListening = false;
 
-    function getElement(id) {
-      return document.getElementById(id);
-    }
+    const $ = id => document.getElementById(id);
 
     function clamp(value, minimum = 0, maximum = 1) {
       const number = Number(value);
@@ -375,14 +382,13 @@
     }
 
     function addMessage(text, sender) {
-      const chatbox = getElement("chatbox");
       const message = document.createElement("div");
 
       message.className = `message ${sender}`;
       message.textContent = text;
 
-      chatbox.appendChild(message);
-      chatbox.scrollTop = chatbox.scrollHeight;
+      $("chatbox").appendChild(message);
+      $("chatbox").scrollTop = $("chatbox").scrollHeight;
     }
 
     function speakText(text) {
@@ -390,258 +396,356 @@
         return;
       }
 
-      const utterance = new SpeechSynthesisUtterance(text);
+      const speech = new SpeechSynthesisUtterance(text);
 
       window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
+      window.speechSynthesis.speak(speech);
     }
 
-    function getInputs() {
+    function defaultState() {
       return {
-        env: clamp(getElement("env").value),
-        emo: clamp(getElement("emo").value),
-        ment: clamp(getElement("ment").value),
-        phys: clamp(getElement("phys").value),
-        res: clamp(getElement("res").value, 0.01, 1)
+        env: 0.2,
+        emo: 0.2,
+        ment: 0.2,
+        phys: 0.2,
+        res: 0.2
       };
     }
 
-    function setInputs(data) {
-      getElement("env").value = clamp(data.env ?? 0.2);
-      getElement("emo").value = clamp(data.emo ?? 0.2);
-      getElement("ment").value = clamp(data.ment ?? 0.2);
-      getElement("phys").value = clamp(data.phys ?? 0.2);
-      getElement("res").value = clamp(data.res ?? 0.2, 0.01, 1);
+    function getState() {
+      return {
+        env: Number($("envValue").dataset.value || 0.2),
+        emo: Number($("emoValue").dataset.value || 0.2),
+        ment: Number($("mentValue").dataset.value || 0.2),
+        phys: Number($("physValue").dataset.value || 0.2),
+        res: Number($("resValue").dataset.value || 0.2)
+      };
     }
 
-    function computeState() {
-      const inputs = getInputs();
+    function setState(state) {
+      const values = {
+        env: clamp(state.env),
+        emo: clamp(state.emo),
+        ment: clamp(state.ment),
+        phys: clamp(state.phys),
+        res: clamp(state.res, 0.01, 1)
+      };
+
+      $("envValue").dataset.value = values.env;
+      $("emoValue").dataset.value = values.emo;
+      $("mentValue").dataset.value = values.ment;
+      $("physValue").dataset.value = values.phys;
+      $("resValue").dataset.value = values.res;
+
+      $("envValue").textContent = values.env.toFixed(3);
+      $("emoValue").textContent = values.emo.toFixed(3);
+      $("mentValue").textContent = values.ment.toFixed(3);
+      $("physValue").textContent = values.phys.toFixed(3);
+      $("resValue").textContent = values.res.toFixed(3);
+
+      $("vectorValue").textContent =
+        `(${values.env.toFixed(3)}, ` +
+        `${values.emo.toFixed(3)}, ` +
+        `${values.ment.toFixed(3)})`;
+
+      updateStatus();
+    }
+
+    function calculateState() {
+      const state = getState();
+
       const agency =
-        inputs.env +
-        inputs.emo +
-        inputs.ment +
-        inputs.phys;
+        state.env +
+        state.emo +
+        state.ment +
+        state.phys;
 
-      const mer = agency / Math.max(inputs.res, 0.0001);
+      const mer = agency / Math.max(state.res, 0.0001);
 
-      let state;
-      let stateLabel;
+      let label;
       let cssClass;
       let advice;
 
       if (agency <= 0) {
-        state = "no_agency";
-        stateLabel = "Navigator not active";
+        label = "Navigator inactive";
         cssClass = "state-none";
-        advice = "No active navigation is detected.";
+        advice = "No active state has been interpreted yet.";
       } else if (mer >= 1) {
-        state = "above_phi";
-        stateLabel = "Hyper-Resonant";
+        label = "Hyper-Resonant";
         cssClass = "state-above";
-        advice = "Your current state supports focused work.";
+        advice = "The interpreted state supports focused work.";
       } else {
-        state = "below_phi";
-        stateLabel = "Entropic";
+        label = "Entropic";
         cssClass = "state-below";
         advice = "Resistance is currently dominant. Consider reducing load or taking a break.";
       }
 
       return {
-        ...inputs,
+        ...state,
         agency,
         mer,
-        state,
-        stateLabel,
+        label,
         cssClass,
         advice
       };
     }
 
-    function updateStatusBox(data) {
-      getElement("statusBox").innerHTML = `
+    function updateStatus() {
+      const data = calculateState();
+
+      $("statusBox").innerHTML = `
         Agency: <strong>${data.agency.toFixed(4)}</strong><br>
         Resistance: <strong>${data.res.toFixed(4)}</strong><br>
         MER: <strong>${data.mer.toFixed(4)}</strong><br>
         State:
         <strong class="${data.cssClass}">
-          ${data.stateLabel}
-        </strong>
+          ${data.label}
+        </strong><br>
+        <br>
+        <small>Calculated from the current interpreted message state.</small>
       `;
     }
 
     function saveState() {
       localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify(getInputs())
+        JSON.stringify(getState())
       );
 
-      return "I saved the current Navigator state locally in this browser.";
+      return "The current interpreted Aion.AI state was saved locally.";
     }
 
     function loadState() {
-      const savedState = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY);
 
-      if (!savedState) {
-        return "I could not find a saved Navigator state.";
+      if (!saved) {
+        return "No saved Aion.AI state was found.";
       }
 
       try {
-        setInputs(JSON.parse(savedState));
-        return buildStatusReport("I loaded the saved Navigator state.");
+        setState(JSON.parse(saved));
+        return buildStatusReport("The saved Aion.AI state was loaded.");
       } catch (error) {
         console.error(error);
-        return "The saved Navigator state could not be read.";
+        return "The saved state could not be loaded.";
       }
     }
 
-    function resetInputs() {
-      setInputs({
-        env: 0.2,
-        emo: 0.2,
-        ment: 0.2,
-        phys: 0.2,
-        res: 0.2
-      });
-
-      updateStatusBox(computeState());
-
-      return "I reset the Navigator state to its baseline.";
+    function resetState() {
+      setState(defaultState());
+      return "The autonomous Aion.AI state was reset to baseline.";
     }
 
-    function buildStatusReport(prefix = "Local autonomous Navigator is active.") {
-      const data = computeState();
-
-      updateStatusBox(data);
-
-      return `${prefix}
-
-Agency: ${data.agency.toFixed(4)}
-Resistance: ${data.res.toFixed(4)}
-MER: ${data.mer.toFixed(4)}
-State: ${data.stateLabel}
-
-${data.advice}`;
+    function containsAny(text, words) {
+      return words.some(word => text.includes(word));
     }
 
-    function adjustStateFromMessage(message) {
+    function interpretMessage(message) {
       const text = message.toLowerCase();
-      const state = getInputs();
+      const state = getState();
 
-      const positiveSignals = [
-        "focused",
-        "focus",
-        "ready",
-        "good",
-        "great",
-        "calm",
-        "confident",
-        "productive",
-        "clear",
-        "motivated",
-        "working",
-        "coherent"
+      const environmentalPositive = [
+        "quiet",
+        "comfortable",
+        "safe",
+        "peaceful",
+        "calm room",
+        "good environment",
+        "good weather",
+        "sunny"
       ];
 
-      const negativeSignals = [
-        "tired",
-        "fatigue",
-        "stressed",
-        "stress",
-        "confused",
-        "blocked",
+      const environmentalNegative = [
+        "noise",
+        "noisy",
+        "crowded",
+        "chaotic",
+        "uncomfortable",
+        "bad environment",
+        "cold room",
+        "hot room",
+        "weather is bad"
+      ];
+
+      const emotionalPositive = [
+        "happy",
+        "calm",
+        "confident",
+        "excited",
+        "motivated",
+        "hopeful",
+        "good mood",
+        "positive"
+      ];
+
+      const emotionalNegative = [
         "sad",
         "angry",
         "anxious",
-        "overwhelmed",
-        "distracted",
-        "exhausted",
-        "cannot",
-        "can't",
-        "hard",
-        "difficult"
+        "worried",
+        "stressed",
+        "upset",
+        "lonely",
+        "overwhelmed"
       ];
 
-      const positive = positiveSignals.some(signal => text.includes(signal));
-      const negative = negativeSignals.some(signal => text.includes(signal));
+      const mentalPositive = [
+        "focused",
+        "clear",
+        "understand",
+        "understood",
+        "thinking clearly",
+        "creative",
+        "alert",
+        "ready to learn"
+      ];
 
-      if (positive) {
-        state.env += 0.02;
-        state.emo += 0.04;
-        state.ment += 0.05;
-        state.phys += 0.02;
-        state.res -= 0.03;
+      const mentalNegative = [
+        "confused",
+        "distracted",
+        "can't focus",
+        "cannot focus",
+        "brain fog",
+        "mentally tired",
+        "forgetful",
+        "blocked"
+      ];
+
+      const physicalPositive = [
+        "energetic",
+        "strong",
+        "rested",
+        "healthy",
+        "awake",
+        "ready to work"
+      ];
+
+      const physicalNegative = [
+        "tired",
+        "exhausted",
+        "sleepy",
+        "sick",
+        "pain",
+        "weak",
+        "physically tired"
+      ];
+
+      if (containsAny(text, environmentalPositive)) {
+        state.env += 0.08;
       }
 
-      if (negative) {
-        state.env -= 0.01;
-        state.emo -= 0.04;
-        state.ment -= 0.06;
-        state.phys -= 0.03;
-        state.res += 0.05;
+      if (containsAny(text, environmentalNegative)) {
+        state.env -= 0.08;
+      }
+
+      if (containsAny(text, emotionalPositive)) {
+        state.emo += 0.08;
+      }
+
+      if (containsAny(text, emotionalNegative)) {
+        state.emo -= 0.08;
+      }
+
+      if (containsAny(text, mentalPositive)) {
+        state.ment += 0.08;
+      }
+
+      if (containsAny(text, mentalNegative)) {
+        state.ment -= 0.08;
+      }
+
+      if (containsAny(text, physicalPositive)) {
+        state.phys += 0.08;
+      }
+
+      if (containsAny(text, physicalNegative)) {
+        state.phys -= 0.08;
       }
 
       if (
-        text.includes("rest") ||
-        text.includes("break") ||
-        text.includes("pause")
+        containsAny(text, [
+          "rest",
+          "break",
+          "pause",
+          "relax",
+          "take a break"
+        ])
       ) {
-        state.res -= 0.05;
-        state.ment += 0.02;
+        state.res -= 0.08;
         state.phys += 0.02;
+        state.ment += 0.02;
       }
 
-      setInputs({
+      if (
+        containsAny(text, [
+          "pressure",
+          "deadline",
+          "difficult",
+          "hard",
+          "struggle",
+          "blocked"
+        ])
+      ) {
+        state.res += 0.08;
+      }
+
+      setState({
         env: clamp(state.env),
         emo: clamp(state.emo),
         ment: clamp(state.ment),
         phys: clamp(state.phys),
         res: clamp(state.res, 0.01, 1)
       });
+
+      return calculateState();
+    }
+
+    function buildStatusReport(prefix = "Aion.AI is active locally.") {
+      const data = calculateState();
+
+      updateStatus();
+
+      return `${prefix}
+
+Virtual state vector:
+Environmental: ${data.env.toFixed(3)}
+Emotional: ${data.emo.toFixed(3)}
+Mental: ${data.ment.toFixed(3)}
+Physical: ${data.phys.toFixed(3)}
+
+Agency: ${data.agency.toFixed(4)}
+Resistance: ${data.res.toFixed(4)}
+MER: ${data.mer.toFixed(4)}
+State: ${data.label}
+
+${data.advice}`;
     }
 
     function helpText() {
-      return `I calculate Navigator state locally from your interaction.
+      return `Aion.AI operates locally.
 
-Available commands:
+Describe your state naturally, for example:
+- I am tired and distracted
+- I feel focused and ready to work
+- The room is noisy and I feel stressed
+- I am calm, rested, and clear
+- I need a break
+
+Aion.AI interprets the message into environmental, emotional, mental, and physical components, then recalculates the virtual state.
+
+Commands:
 - status report
 - save state
 - load state
-- reset inputs
-- hi
-- hello
-- yes
-- how about now
-- are you working
-
-You can also describe your condition or work state, such as:
-- I am focused and ready to work
-- I am tired and distracted
-- I need a break`;
+- reset state
+- help`;
     }
 
     function runCommand(rawText) {
       const text = rawText.toLowerCase().trim();
 
-      if (
-        text === "hi" ||
-        text === "hello" ||
-        text === "hey" ||
-        text === "yes" ||
-        text.includes("how about now") ||
-        text.includes("are you working")
-      ) {
-        return buildStatusReport();
-      }
-
-      if (
-        text.includes("help") ||
-        text.includes("what can you do")
-      ) {
+      if (text.includes("help")) {
         return helpText();
-      }
-
-      if (text.includes("status")) {
-        return buildStatusReport();
       }
 
       if (text.includes("save")) {
@@ -653,13 +757,30 @@ You can also describe your condition or work state, such as:
       }
 
       if (text.includes("reset")) {
-        return resetInputs();
+        return resetState();
       }
 
-      adjustStateFromMessage(rawText);
+      if (
+        text.includes("status") ||
+        text === "hi" ||
+        text === "hello" ||
+        text === "yes" ||
+        text.includes("are you working") ||
+        text.includes("how about now")
+      ) {
+        return buildStatusReport();
+      }
+
+      const interpreted = interpretMessage(rawText);
 
       return buildStatusReport(
-        "I updated the local Navigator state from your message."
+        `Aion.AI interpreted your message and updated the virtual state.
+
+Detected state vector:
+Environmental ${interpreted.env.toFixed(3)}
+Emotional ${interpreted.emo.toFixed(3)}
+Mental ${interpreted.ment.toFixed(3)}
+Physical ${interpreted.phys.toFixed(3)}`
       );
     }
 
@@ -673,7 +794,7 @@ You can also describe your condition or work state, such as:
     }
 
     function sendMessage() {
-      const input = getElement("userInput");
+      const input = $("userInput");
       const text = input.value.trim();
 
       if (!text) {
@@ -706,9 +827,8 @@ You can also describe your condition or work state, such as:
 
       recognizer.onstart = function () {
         isListening = true;
-
-        getElement("micBtn").classList.add("listening");
-        getElement("micBtn").textContent = "🎙️ Listening...";
+        $("micBtn").classList.add("listening");
+        $("micBtn").textContent = "🎙️ Listening...";
       };
 
       recognizer.onresult = function (event) {
@@ -732,9 +852,8 @@ You can also describe your condition or work state, such as:
 
       recognizer.onend = function () {
         isListening = false;
-
-        getElement("micBtn").classList.remove("listening");
-        getElement("micBtn").textContent = "🎤 Speak";
+        $("micBtn").classList.remove("listening");
+        $("micBtn").textContent = "🎤 Speak";
       };
 
       return recognizer;
@@ -760,30 +879,28 @@ You can also describe your condition or work state, such as:
       }
     }
 
-    getElement("userInput").addEventListener(
-      "keydown",
-      function (event) {
-        if (event.key === "Enter") {
-          sendMessage();
-        }
+    $("userInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        sendMessage();
       }
-    );
+    });
 
     function boot() {
-      const savedState = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY);
 
-      if (savedState) {
+      if (saved) {
         try {
-          setInputs(JSON.parse(savedState));
+          setState(JSON.parse(saved));
         } catch (error) {
           console.error("Saved state could not be loaded.", error);
+          setState(defaultState());
         }
+      } else {
+        setState(defaultState());
       }
 
-      updateStatusBox(computeState());
-
       addMessage(
-        "Hello, I’m Aion.AI. Autonomous local UQTN calculation is active. Tell me how you are doing or what you want to work on.",
+        "Hello, I’m Aion.AI. Autonomous local UQTN interpretation is active. Tell me how you are feeling or what you are working on.",
         "bot"
       );
     }
