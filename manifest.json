@@ -1,0 +1,10 @@
+{
+  "name": "Aion.AI — UQTN Navigator",
+  "short_name": "Aion.AI",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1522",
+  "theme_color": "#223247",
+  "description": "Local offline UQTN temporal navigator.",
+  "icons": []
+}
