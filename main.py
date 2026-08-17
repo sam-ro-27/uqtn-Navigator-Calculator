@@ -1,62 +1,145 @@
-try:
-    import memory  # type: ignore
-except (ImportError, ModuleNotFoundError):
-    memory = None
+# main.py
 
-load_lines = getattr(memory, "load_lines", None) if memory else None
-if callable(load_lines):
-    try:
-        print(load_lines())
-    except Exception:
-        print([])
-else:
-    print([])
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Dict
+
+from memory import FileMemory, load_project_memory
 
 
-def dump_memory(mem):
-    fn = getattr(mem, "all_items", None)
-    if callable(fn):
-        try:
-            return fn()
-        except Exception:
-            pass
+PROJECT_DIR = Path(__file__).resolve().parent
 
-    fn = getattr(mem, "items", None)
-    if callable(fn):
-        try:
-            return fn()
-        except Exception:
-            pass
 
-    return []
+def format_items(items: Dict[str, str]) -> str:
+    """Format key-value memory as readable bridge text."""
+    if not items:
+        return "(none recorded)"
 
-def build_memory_bridge():
-    if memory is None:
-        return {"core": None, "active": None, "delta": None}
+    return "\n".join(
+        f"- {key}: {value}"
+        for key, value in items.items()
+    )
 
-    FileMemory = getattr(memory, "FileMemory", None)
-    if not callable(FileMemory):
-        return {"core": None, "active": None, "delta": None}
 
-    core = FileMemory("core_memory.txt")
-    active = FileMemory("active_state.txt")
-    delta = FileMemory("session_delta.txt")
+def build_memory_bridge(
+    memory_directory: str | Path = PROJECT_DIR,
+) -> Path:
+    """
+    Build memory_bridge.txt from:
 
-    return {
-        "core": core,
-        "active": active,
-        "delta": delta
-    }
+    - core_memory.txt
+    - active_state.txt
+    - session_delta.txt
+    """
+    directory = Path(memory_directory)
 
-def main():
-    if memory is None:
-        print("Error: memory module not available")
+    core = FileMemory(
+        directory / "core_memory.txt"
+    ).all_items()
+
+    active = FileMemory(
+        directory / "active_state.txt"
+    ).all_items()
+
+    delta = FileMemory(
+        directory / "session_delta.txt"
+    ).all_items()
+
+    generated_at = datetime.now(
+        timezone.utc
+    ).isoformat()
+
+    bridge_lines = [
+        "ZETARI.AI / UQTN MEMORY BRIDGE",
+        "==============================",
+        "",
+        "PROJECT",
+        "-------",
+        "project_name=Unified Quantum-Temporal Navigation",
+        "project_abbreviation=UQTN",
+        "application=Zetari.AI",
+        "assistant_identifier=Navigator",
+        "theory_owner=Sam",
+        "theory_status=Original independent framework",
+        "boundary=UQTN is not Streamline Science",
+        "purpose=Portable local-first project continuity",
+        f"generated_at={generated_at}",
+        "",
+        "CORE MEMORY",
+        "-----------",
+        format_items(core),
+        "",
+        "ACTIVE STATE",
+        "------------",
+        format_items(active),
+        "",
+        "SESSION DELTA",
+        "-------------",
+        format_items(delta),
+        "",
+        "REHYDRATION NOTE",
+        "----------------",
+        "Use this packet as the current external context for UQTN work.",
+        "Preserve UQTN as Sam's independent theory and architecture.",
+        "Use Navigator as the assistant identifier.",
+        "Continue from the supplied project state rather than restarting.",
+    ]
+
+    bridge_path = directory / "memory_bridge.txt"
+
+    bridge_path.write_text(
+        "\n".join(bridge_lines) + "\n",
+        encoding="utf-8",
+    )
+
+    return bridge_path
+
+
+def print_memory_section(
+    title: str,
+    items: Dict[str, str],
+) -> None:
+    """Print one memory section to the terminal."""
+    print(f"\n{title}")
+    print("-" * len(title))
+
+    if not items:
+        print("(none recorded)")
         return
-    
-    bridge = build_memory_bridge()
-    print("CORE:", dump_memory(bridge["core"]))
-    print("ACTIVE:", dump_memory(bridge["active"]))
-    print("DELTA:", dump_memory(bridge["delta"]))
+
+    for key, value in items.items():
+        print(f"{key}: {value}")
+
+
+def main() -> None:
+    """Load memory, print it, and rebuild the bridge."""
+    print("Zetari.AI / UQTN Memory System")
+    print("==============================")
+
+    memory = load_project_memory(PROJECT_DIR)
+
+    print_memory_section(
+        "CORE MEMORY",
+        memory["core"],
+    )
+
+    print_memory_section(
+        "ACTIVE STATE",
+        memory["active"],
+    )
+
+    print_memory_section(
+        "SESSION DELTA",
+        memory["delta"],
+    )
+
+    bridge_path = build_memory_bridge(PROJECT_DIR)
+
+    print("\nBridge rebuilt:")
+    print(bridge_path)
+
 
 if __name__ == "__main__":
     main()
