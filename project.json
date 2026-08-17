@@ -30,3 +30,16 @@
   "current_sessions": "sessions/current/",
   "future_sessions": "sessions/future/"
 }
+
+{
+  "project": "UQTN",
+  "application": "Zetari.AI",
+  "assistant": "Navigator",
+  "python_entry": "navigator_agent.py",
+  "browser_entry": "index.html",
+  "javascript_entry": "main.js",
+  "state_file": "runtime/current_state.json",
+  "history_file": "runtime/navigator_history.json",
+  "memory_bridge": "memory/memory_bridge.txt",
+  "theory_source": "theory/uqtn_master_synthesis_v6_3.md"
+}
