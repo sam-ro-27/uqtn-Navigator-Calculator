@@ -1,1 +1,47 @@
-__pycache__/api_server.cpython-313.pyc
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test and tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Runtime-generated files
+navigator_history.json
+state_history.json
+chat_tree_store.json
+runtime/
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/*
+!.vscode/tasks.json
+!.vscode/settings.json
+
+# Local PWA/browser files
+*.local.json
