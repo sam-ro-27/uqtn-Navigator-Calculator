@@ -1,0 +1,32 @@
+{
+  "project": "UQTN",
+  "application": "Aion.AI",
+  "assistant": "Navigator",
+  "owner": "Sam",
+  "root_node": "uqtn-001",
+  "current_node": "uqtn-005",
+  "theory_sources": [
+    "theory/uqtn_master_synthesis_v6_3.md",
+    "theory/uqtn_master_summary.md",
+    "theory/rotor_pde_note.md"
+  ],
+  "memory_sources": [
+    "memory/core_memory.txt",
+    "memory/active_state.txt",
+    "memory/session_delta.txt",
+    "memory/memory_bridge.txt",
+    "memory/state_history.json",
+    "memory/chat_tree_store.json"
+  ],
+  "math_modules": [
+    "math/mer.js",
+    "math/branches.js",
+    "math/hypercube.js",
+    "math/hypersphere.js",
+    "math/rotor.js",
+    "math/anchors.js"
+  ],
+  "past_sessions": "sessions/past/",
+  "current_sessions": "sessions/current/",
+  "future_sessions": "sessions/future/"
+}
