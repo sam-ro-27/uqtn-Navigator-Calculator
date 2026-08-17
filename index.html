@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aion.AI</title>
+  <title>Zetari.AI</title>
 
   <style>
     * { box-sizing: border-box; }
@@ -252,7 +252,7 @@
 <body>
   <div class="app">
     <header class="header">
-      <h1>Aion.AI</h1>
+      <h1>ZETARI.AI</h1>
       <p>
         A local autonomous UQTN Navigator for virtual state interpretation
         and coherent work time.
@@ -320,7 +320,7 @@
         <div id="statusBox" class="status-box"></div>
 
         <div class="status-note">
-          Aion.AI interprets the user's text or voice locally, separates
+          ZETARI.AI interprets the user's text or voice locally, separates
           the message into environmental, emotional, mental, and physical
           dimensions, then calculates the virtual state.
           No cloud API key is required.
@@ -335,7 +335,7 @@
             <input
               id="userInput"
               type="text"
-              placeholder="Tell Aion.AI how you are feeling or what you are working on"
+              placeholder="Tell Zetari.AI how you are feeling or what you are working on"
             >
 
             <button
@@ -364,7 +364,7 @@
   <script>
     "use strict";
 
-    const STORAGE_KEY = "aion_autonomous_state";
+    const STORAGE_KEY = "zetari_autonomous_state";
 
     let recognition = null;
     let isListening = false;
@@ -512,19 +512,19 @@
         JSON.stringify(getState())
       );
 
-      return "The current interpreted Aion.AI state was saved locally.";
+      return "The current interpreted Zetari.AI state was saved locally.";
     }
 
     function loadState() {
       const saved = localStorage.getItem(STORAGE_KEY);
 
       if (!saved) {
-        return "No saved Aion.AI state was found.";
+        return "No saved Zetari.AI state was found.";
       }
 
       try {
         setState(JSON.parse(saved));
-        return buildStatusReport("The saved Aion.AI state was loaded.");
+        return buildStatusReport("The saved Zetari.AI state was loaded.");
       } catch (error) {
         console.error(error);
         return "The saved state could not be loaded.";
@@ -533,7 +533,7 @@
 
     function resetState() {
       setState(defaultState());
-      return "The autonomous Aion.AI state was reset to baseline.";
+      return "The autonomous Zetari.AI state was reset to baseline.";
     }
 
     function containsAny(text, words) {
@@ -700,7 +700,7 @@
       return calculateState();
     }
 
-    function buildStatusReport(prefix = "Aion.AI is active locally.") {
+    function buildStatusReport(prefix = "Zetari.AI is active locally.") {
       const data = calculateState();
 
       updateStatus();
@@ -722,7 +722,7 @@ ${data.advice}`;
     }
 
     function helpText() {
-      return `Aion.AI operates locally.
+      return `Zetari.AI operates locally.
 
 Describe your state naturally, for example:
 - I am tired and distracted
@@ -731,7 +731,7 @@ Describe your state naturally, for example:
 - I am calm, rested, and clear
 - I need a break
 
-Aion.AI interprets the message into environmental, emotional, mental, and physical components, then recalculates the virtual state.
+Zetari.AI interprets the message into environmental, emotional, mental, and physical components, then recalculates the virtual state.
 
 Commands:
 - status report
@@ -774,7 +774,7 @@ Commands:
       const interpreted = interpretMessage(rawText);
 
       return buildStatusReport(
-        `Aion.AI interpreted your message and updated the virtual state.
+        `Zetari.AI interpreted your message and updated the virtual state.
 
 Detected state vector:
 Environmental ${interpreted.env.toFixed(3)}
@@ -900,7 +900,7 @@ Physical ${interpreted.phys.toFixed(3)}`
       }
 
       addMessage(
-        "Hello, I’m Aion.AI. Autonomous local UQTN interpretation is active. Tell me how you are feeling or what you are working on.",
+        "Hello, I’m Zetari.AI. Autonomous local UQTN interpretation is active. Tell me how you are feeling or what you are working on.",
         "bot"
       );
     }

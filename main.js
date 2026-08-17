@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  const KEY="aion_state_v1", LOG="aion_state_log", PHI=1.618033988749895;
+  const KEY="zetari_state_v1", LOG="aion_state_log", PHI=1.618033988749895;
   const $=id=>document.getElementById(id), now=()=>Date.now();
   const defaults=()=>({env:.2,emo:.2,ment:.2,phys:.2,res:.2,task_type:"general",session:null});
   let state=loadState(), recognition=null, listening=false;

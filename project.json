@@ -1,8 +1,8 @@
 {
   "project": "UQTN",
-  "application": "Aion.AI",
+  "application": "Zetari.AI",
   "assistant": "Navigator",
-  "owner": "Sam",
+  "owner": "Samuel Taylor Andrew Rowley",
   "root_node": "uqtn-001",
   "current_node": "uqtn-005",
   "theory_sources": [
