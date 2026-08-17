@@ -1,0 +1,24 @@
+[
+  {
+    "timestamp": "2026-08-17T15:26:48.945218+00:00",
+    "agent": "Navigator",
+    "description": "Initial Zetari.AI UQTN Navigator test",
+    "env": 0.2,
+    "emo": 0.2,
+    "ment": 0.2,
+    "phys": 0.2,
+    "agency": 0.8,
+    "resistance": 0.2,
+    "nav_time": 0.0,
+    "depletion_rate": 0.0,
+    "mer": 6.47213595499958,
+    "coherence_state": "above_phi: coherent navigation (keep going)",
+    "zeta_activations": {
+      "0": 1.2944271909999159,
+      "1": 1.2944271909999159,
+      "2": 1.2944271909999159,
+      "3": 1.2944271909999159,
+      "4": 1.2944271909999159
+    }
+  }
+]
