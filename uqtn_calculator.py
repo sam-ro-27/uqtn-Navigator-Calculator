@@ -1,53 +1,200 @@
-# UQTN NAVIGATOR CALCULATOR (ORIGINAL DESIGN STYLE)
-# Unified Quantum-Temporal Navigation — Agency / Resistance × phi
-# Version: UQTN-style, interactive
+# uqtn_calculator.py
+"""
+Zetari.AI / UQTN Calculator
 
-# --- LOCKED CONSTANTS ----------------------------------------
-PHI = 1.618033988749895  # Golden ratio coherence scalar (do not change)
+Provides:
+- reusable calculation functions
+- parallel UQTN MER branches
+- Navigator coherence classification
+- optional interactive terminal mode
 
-# --- INPUTS ---------------------------------------------------
-print("UQTN NAVIGATOR CALCULATOR — ORIGINAL DESIGN")
-print("==========================================")
-print("Enter your energy domains (0–1 scale each):")
+The calculator can be imported by:
+- navigator_agent.py
+- api_server.py
+- tests
+- command-line use
+"""
 
-# For humans: env, emotional, mental, physical
-env_energy      = float(input("Environmental energy  : "))
-emotional_energy = float(input("Emotional energy      : "))
-mental_energy    = float(input("Mental energy         : "))
-physical_energy  = float(input("Physical energy       : "))
+from __future__ import annotations
 
-# Resistance: fraction reflecting opposing forces (0–1, but not 0)
-resistance = float(input("Resistance R (0–1, not 0): "))
+from dataclasses import asdict
+from typing import Any, Dict
 
-# --- AGENCY & MER --------------------------------------------
-# Agency is the sum of energy domains
-agency = env_energy + emotional_energy + mental_energy + physical_energy
+from uqtn_core import PHI, NavigatorState, coherence_state
+from uqtn_math import (
+    UQTNInput,
+    calculate_branches,
+    classify_branches,
+)
 
-# MER = (Agency / Resistance) * PHI  (your unified human/AI formula)
-if resistance == 0.0:
-    mer = float("inf")
-else:
-    mer = (agency / resistance) * PHI
 
-# --- COHERENCE STATE -----------------------------------------
-# We compare MER to a coherence threshold. For “original design” feeling,
-# we treat PHI as the baseline coherence scalar.
-phi_threshold = PHI  # you can later tune this if needed
+def calculate_navigator_state(
+    env: float,
+    emo: float,
+    ment: float,
+    phys: float,
+    resistance: float,
+    nav_time: float = 0.0,
+    depletion_rate: float = 0.0,
+) -> Dict[str, Any]:
+    """
+    Calculate a complete Navigator state.
 
-if agency <= 0.0:
-    coherence_state = "no_agency: navigator not active"
-elif mer > phi_threshold:
-    coherence_state = "above_phi: coherent navigation (keep going)"
-elif abs(mer - phi_threshold) < 1e-6:
-    coherence_state = "at_phi: critical threshold (minimum viable momentum)"
-else:
-    coherence_state = "below_phi: decoherence + fatigue (delegate or rest)"
+    This function is reusable by the terminal calculator,
+    API server, Navigator agent, and tests.
+    """
+    state = NavigatorState(
+        env=env,
+        emo=emo,
+        ment=ment,
+        phys=phys,
+        resistance=resistance,
+        nav_time=nav_time,
+        depletion_rate=depletion_rate,
+    )
 
-# --- OUTPUT ---------------------------------------------------
-print("\nRESULTS")
-print("-------")
-print(f"Agency (sum of domains)   : {agency:.4f}")
-print(f"Resistance R              : {resistance:.4f}")
-print(f"Phi (coherence scalar)    : {PHI:.4f}")
-print(f"MER = (Agency / R) * Phi  : {mer:.4f}")
-print(f"Coherence state           : {coherence_state}")
+    uqtn_input = UQTNInput(
+        mass=1.0,
+        energy=state.agency,
+        resistance=state.resistance,
+        agency=state.agency,
+    )
+
+    branch_result = calculate_branches(uqtn_input)
+    branch_labels = classify_branches(branch_result)
+
+    return {
+        "navigator_state": state.to_dict(),
+        "coherence_state": coherence_state(state.mer),
+        "uqtn_input": branch_result["inputs"],
+        "uqtn_constants": branch_result["constants"],
+        "uqtn_branches": branch_result["branches"],
+        "uqtn_branch_labels": branch_labels,
+        "effective_resistance": branch_result[
+            "effective_resistance"
+        ],
+        "phi_identity_check": branch_result[
+            "phi_identity_check"
+        ],
+    }
+
+
+def print_results(result: Dict[str, Any]) -> None:
+    """Print a complete formatted calculation result."""
+    state = result["navigator_state"]
+    branches = result["uqtn_branches"]
+    labels = result["uqtn_branch_labels"]
+
+    print("\nRESULTS")
+    print("=======")
+
+    print(f"Agency: {state['agency']:.6f}")
+    print(f"Resistance: {state['resistance']:.6f}")
+    print(f"Phi: {PHI:.15f}")
+    print(f"Navigator MER: {state['mer']:.6f}")
+    print(f"Coherence: {result['coherence_state']}")
+
+    print("\nPARALLEL UQTN BRANCHES")
+    print("======================")
+
+    for name, value in branches.items():
+        print(
+            f"{name}: "
+            f"{float(value):.6f} "
+            f"[{labels[name]}]"
+        )
+
+    print("\nEFFECTIVE RESISTANCE")
+    print("====================")
+    print(
+        f"{result['effective_resistance']:.6f}"
+    )
+
+
+def read_float(prompt: str, minimum: float | None = None) -> float:
+    """Read and validate one numeric terminal value."""
+    while True:
+        try:
+            value = float(input(prompt))
+
+            if minimum is not None and value < minimum:
+                print(
+                    f"Enter a value greater than or equal to {minimum}."
+                )
+                continue
+
+            return value
+
+        except ValueError:
+            print("Please enter a valid number.")
+
+
+def interactive_calculator() -> None:
+    """Run the original interactive calculator style."""
+    print("ZETARI.AI / UQTN NAVIGATOR CALCULATOR")
+    print("=====================================")
+    print("Enter energy domains on a 0–1 scale.")
+
+    env = read_float(
+        "Environmental energy: ",
+        minimum=0.0,
+    )
+
+    emo = read_float(
+        "Emotional energy: ",
+        minimum=0.0,
+    )
+
+    ment = read_float(
+        "Mental energy: ",
+        minimum=0.0,
+    )
+
+    phys = read_float(
+        "Physical energy: ",
+        minimum=0.0,
+    )
+
+    resistance = read_float(
+        "Resistance R: ",
+        minimum=0.0001,
+    )
+
+    nav_time = read_float(
+        "Navigation time [default 0]: ",
+        minimum=0.0,
+    )
+
+    depletion_rate = read_float(
+        "Depletion rate [default 0]: ",
+        minimum=0.0,
+    )
+
+    result = calculate_navigator_state(
+        env=env,
+        emo=emo,
+        ment=ment,
+        phys=phys,
+        resistance=resistance,
+        nav_time=nav_time,
+        depletion_rate=depletion_rate,
+    )
+
+    print_results(result)
+
+
+def demo() -> None:
+    """Run a non-interactive smoke test."""
+    result = calculate_navigator_state(
+        env=0.2,
+        emo=0.2,
+        ment=0.2,
+        phys=0.2,
+        resistance=0.2,
+    )
+
+    print_results(result)
+
+
+if __name__ == "__main__":
+    interactive_calculator()
