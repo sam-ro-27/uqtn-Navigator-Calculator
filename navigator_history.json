@@ -1,18 +1,65 @@
 [
   {
-    "timestamp": "2026-08-17T15:26:48.945218+00:00",
+    "timestamp": "2026-08-17T16:11:30.185053+00:00",
     "agent": "Navigator",
-    "description": "Initial Zetari.AI UQTN Navigator test",
-    "env": 0.2,
-    "emo": 0.2,
-    "ment": 0.2,
-    "phys": 0.2,
-    "agency": 0.8,
-    "resistance": 0.2,
-    "nav_time": 0.0,
-    "depletion_rate": 0.0,
-    "mer": 6.47213595499958,
-    "coherence_state": "above_phi: coherent navigation (keep going)",
+    "description": "Integrated Zetari.AI UQTN Navigator test",
+    "navigator_state": {
+      "env": 0.2,
+      "emo": 0.2,
+      "ment": 0.2,
+      "phys": 0.2,
+      "agency": 0.8,
+      "resistance": 0.2,
+      "nav_time": 0.0,
+      "depletion_rate": 0.0,
+      "mer": 6.47213595499958,
+      "coherence_state": "above_phi: coherent navigation (keep going)"
+    },
+    "uqtn_input": {
+      "mass": 1.0,
+      "energy": 0.8,
+      "resistance": 0.2,
+      "agency": 0.8,
+      "theta": 0.0,
+      "theta_critical": 0.0
+    },
+    "uqtn_constants": {
+      "xi": 8.8596249,
+      "mer_full": 314.5458074,
+      "m_final": 491.4054601,
+      "r_kerr": 1.5721931,
+      "d_theta_hz": 4.65,
+      "t_binding_seconds": 0.18594,
+      "eta_uqtn": 0.691982,
+      "a_uqtn": 0.000992063492063492,
+      "chronon_mass": 8.0,
+      "harmonic_base": 9.0,
+      "consciousness_time_rate": 5.6,
+      "phi": 1.618033988749895,
+      "mer_simple_reference": 1.0355,
+      "f_qa": 0.0
+    },
+    "uqtn_branches": {
+      "inverse_resistance": 6.4721359549995805,
+      "reciprocal_phi": 6.4721359549995805,
+      "standard_drag": 1.0355417527999329,
+      "inverted_resistance": 1.553312629199899,
+      "angle_dependent": 1.0355417527999329
+    },
+    "uqtn_branch_labels": {
+      "inverse_resistance": "Hyper-Resonant",
+      "reciprocal_phi": "Hyper-Resonant",
+      "standard_drag": "Focused",
+      "inverted_resistance": "Hyper-Resonant",
+      "angle_dependent": "Focused"
+    },
+    "effective_resistance": 0.2,
+    "phi_identity_check": {
+      "phi_squared": 2.618033988749895,
+      "phi_plus_one": 2.618033988749895,
+      "phi_minus_one": 0.6180339887498949,
+      "one_over_phi": 0.6180339887498948
+    },
     "zeta_activations": {
       "0": 1.2944271909999159,
       "1": 1.2944271909999159,
