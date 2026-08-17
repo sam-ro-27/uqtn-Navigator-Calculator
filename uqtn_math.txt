@@ -1,0 +1,18 @@
+MER = Mass × Energy / Resistance
+
+MER_base = (Mass × Energy) / Resistance
+MER_phi_multiply = MER_base × φ
+MER_phi_divide = MER_base ÷ φ
+
+φ = 1.618033988749895
+Ξ = 8.8596249
+MER_full = 314.5458074
+M_final = ±491.4054601
+r_Kerr = 1.5721931
+d_theta = 4.65 Hz
+t_binding = ±0.18594 s
+η_UQTN = 0.691982
+a_UQTN = 1/1008
+χ = 8
+n_H = 9
+consciousness-time rate = 5.6
