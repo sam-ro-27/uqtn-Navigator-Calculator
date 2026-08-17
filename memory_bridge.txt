@@ -1,47 +1,146 @@
+```text
 UQTN MEMORY BRIDGE
 ==================
-Project: Unified Quantum-Temporal Navigation (UQTN)
-Assistant identifier: Navigator
-Purpose: portable continuity state for local-first project work.
-Generated from synced plain-text files.
 
-CORE MEMORY
------------
-- project_name: Unified Quantum-Temporal Navigation
-- project_abbreviation: UQTN
-- project_owner: User's original theory and project framework
-- assistant_identifier: Navigator
-- project_status: Independent UQTN theory, language system, and architecture
-- long_term_goal: Build a persistent external memory layer for UQTN project continuity
-- sync_model: Local-first plain-text files synchronized through OneDrive
-- continuity_model: Rehydrate project state across sessions, devices, and contexts
-- boundary: UQTN is not Streamline Science and must not be attributed to it
+PROJECT
+-------
+project_name=Unified Quantum-Temporal Navigation
+project_abbreviation=UQTN
+theory_owner=Sam
+theory_status=Original independent theory, language system, and architecture
+application=Zetari.AI
+assistant_identifier=Navigator
+project_status=Active local-first development
+boundary=UQTN is independent and must not be attributed to Streamline Science
 
-ACTIVE STATE
+PURPOSE
+-------
+purpose=Provide persistent external project continuity across sessions, devices, and contexts
+sync_mode=Local-first OneDrive and GitHub synchronization
+continuity_model=Rehydrate project state from readable text, JSON, Python, and JavaScript files
+runtime_mode=Offline-capable with no required cloud API key
+
+CURRENT PROJECT STATE
+---------------------
+current_focus=Integrate the Zetari.AI browser interface with the UQTN Python calculation engine
+current_build_target=Connect Navigator, UQTN parallel math branches, zeta lattice propagation, memory, and browser state
+current_application=Zetari.AI
+current_assistant=Navigator
+current_repository=uqtn-Navigator-Calculator
+working_environment=VS Code on Windows
+deployment_target=GitHub Pages plus local Python development server
+server_mode=Optional local FastAPI and Uvicorn bridge
+browser_mode=Local offline fallback remains available
+
+IMPLEMENTED FILES
+-----------------
+browser_interface=index.html
+browser_logic=main.js
+offline_service_worker=sw.js
+pwa_manifest=manifest.json
+python_agent=navigator_agent.py
+python_core=uqtn_core.py
+math_engine=uqtn_math.py
+zeta_lattice=zeta_lattice.py
+rotor_simulation=rotor_sim.py
+calculator=uqtn_calculator.py
+memory_engine=memory.py
+api_bridge=api_server.py
+history_file=navigator_history.json
+project_registry=project.json
+
+MATHEMATICAL ENGINE
+-------------------
+core_equation=MER=(Mass*Energy)/Resistance
+phi=1.618033988749895
+mer_inverse_branch=(Mass*Energy*phi)/Resistance
+mer_reciprocal_phi_branch=(Mass*Energy)/(Resistance*(1/phi))
+mer_standard_drag_branch=Agency*(1-Resistance)*phi
+mer_inverted_resistance_branch=Agency*(1+abs(Resistance))*phi
+angle_dependent_resistance=Resistance*cos(theta-theta_critical)
+parallel_branch_rule=All mathematical branches use the same state snapshot and are calculated side by side
+reference_mer_simple=1.0355 at Agency=0.8 and Resistance=0.2
+
+UQTN CONSTANTS
+--------------
+master_scalar_XI=8.8596249
+MER_full=314.5458074
+M_final=+/-491.4054601
+r_Kerr=1.5721931
+d_theta=4.65 Hz
+t_binding=+/-0.18594 seconds
+eta_UQTN=0.691982
+a_UQTN=1/1008
+chronon_mass=8
+harmonic_base=9
+consciousness_time_rate=5.6
+f_QA=0
+
+ZETA LATTICE
 ------------
-- current_focus: Implement and test the local-first memory bridge
-- current_build_target: memory.py, main.py, source memory files, and memory_bridge.txt
-- working_environment: VS Code on Windows
-- storage_location: Dedicated UQTN memory folder inside OneDrive
-- open_question: Decide whether to enable the optional file watcher for daily use
-- next_action: Run python main.py, review memory_bridge.txt, then edit state files as needed
+zeta_role=Spectral anchor nodes with computational gaps between nodes
+lattice_behavior=Propagate Navigator MER across connected anchor nodes
+default_nodes=Five initial non-trivial zeta-zero imaginary parts
+embedding=Deterministic three-dimensional computational coordinates
+propagation=Bidirectional weighted near-neighbor activation
+history=Zeta activations are stored with Navigator history records
 
-SESSION DELTA
+NAVIGATOR AGENT
+---------------
+agent_name=Navigator
+agent_behavior=Load state, calculate MER branches, classify coherence, propagate zeta lattice, and save history
+coherence_threshold=phi
+current_verified_status=above_phi: coherent navigation
+last_verified_agency=0.8
+last_verified_resistance=0.2
+last_verified_navigator_mer=6.47213595499958
+last_verified_zeta_nodes=5
+last_verified_result=Successful integrated Navigator and UQTN math execution
+
+MEMORY SYSTEM
 -------------
-- last_updated: 2026-08-11
-- latest_update: Initial memory bridge scaffold created
-- latest_decision: Use simple key=value text files and a generated portable bridge packet
-- next_session: Validate OneDrive folder placement and test desktop-to-mobile access
+memory_model=Readable key-value text files plus structured JSON history
+core_memory=core_memory.txt
+active_state=active_state.txt
+session_delta=session_delta.txt
+bridge_file=memory_bridge.txt
+agent_history=navigator_history.json
+chat_tree=chat_tree_store.json
+memory_policy=Preserve stable identity, active work, and newest session updates separately
+source_of_truth=Local project files synchronized through OneDrive and GitHub
 
-REHYDRATION NOTE
-----------------
-Use this packet to reconstruct project identity, current focus, and latest updates.
-UQTN remains an independent theory, language system, and architecture.
-Use this file as the current external context for the UQTN project.
+APPLICATION BEHAVIOR
+--------------------
+input_mode=Natural language and voice
+interpretation_mode=Local rule-based state interpretation
+state_dimensions=Environmental, emotional, mental, and physical
+state_vector=(environmental, emotional, mental, physical)
+session_features=Start session, plan block, summary, end session
+history_features=Temporal state log and recent timeline
+offline_policy=No cloud endpoint required for core operation
+future_llm=Optional local WebLLM, browser AI, or local Python model integration
 
-Preserve UQTN as Unified Quantum-Temporal Navigation,
-the user's independent theory, language system, and architecture.
-Use Navigator as the project assistant identifier.
+CURRENT NEXT STEPS
+------------------
+next_step=Connect Zetari.AI browser input to the local Python Navigator bridge
+next_step_2=Expose a local /api/navigate endpoint through api_server.py
+next_step_3=Return Navigator state, parallel MER branches, zeta activations, and recommendations to the browser
+next_step_4=Keep the browser-only fallback when the Python bridge is unavailable
+next_step_5=Add UQTN theory and math documents to the project registry
+
+REHYDRATION INSTRUCTIONS
+------------------------
+Use this file as the current external context for UQTN and Zetari.AI work.
+
+Preserve UQTN as Sam's independent theory, language system, and architecture.
+
 Do not attribute UQTN to Streamline Science.
 
-Continue from the supplied project state rather than restarting.
+Use Navigator as the assistant identifier.
+
+Treat the Python, JavaScript, JSON, TXT, Markdown, and simulation files as connected components of one project.
+
+Do not overwrite historical records without preserving the previous version.
+
+Continue from the current project state rather than restarting.
+```
