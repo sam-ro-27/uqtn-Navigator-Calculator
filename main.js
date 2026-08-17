@@ -21,3 +21,18 @@
   $("speak").onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){add("Voice input is unavailable in this browser.","bot");return}if(!recognition){recognition=new SR();recognition.lang="en-US";recognition.onresult=e=>{const t=e.results[0][0].transcript;add(t,"user");add(command(t),"bot")};recognition.onend=()=>{listening=false;$("speak").textContent="🎤 Speak"}}if(listening)recognition.stop();else{listening=true;$("speak").textContent="🎙️ Listening...";recognition.start()}};
   render();add("Navigator ready. Describe how you feel or what you are working on to start a session.","bot");if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(console.warn);
 })();
+let projectRegistry = null;
+
+async function loadProjectRegistry() {
+  try {
+    const response = await fetch("project.json");
+    if (!response.ok) {
+      throw new Error(`Registry request failed: ${response.status}`);
+    }
+
+    projectRegistry = await response.json();
+    console.log("UQTN project registry loaded:", projectRegistry);
+  } catch (error) {
+    console.warn("Project registry unavailable:", error);
+  }
+}
