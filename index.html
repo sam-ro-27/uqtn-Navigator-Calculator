@@ -373,7 +373,7 @@
         <div class="status-note">
           Zetari.AI interprets text or voice locally, updates the four-dimensional
           virtual state, calculates parallel MER branches, records history,
-          and provides navigation guidance. No cloud API key is required.
+          and provides navigation guidance connected to Ollama and UQTN.
         </div>
       </aside>
 
@@ -385,7 +385,7 @@
             <input
               id="userInput"
               type="text"
-              placeholder="Describe how you feel or what you are working on"
+              placeholder="Ask Navigator a question or describe how you feel..."
             >
 
             <button
@@ -402,8 +402,8 @@
           </div>
 
           <div class="note">
-            Try: “I feel focused and ready to code”, “plan block 30 minutes”,
-            “summary”, or “I am tired and distracted”.
+            Try: “What is the master MER equation?”, “plan block 30 minutes”,
+            “summary”, or “I feel focused and ready to code”.
           </div>
         </div>
       </section>
@@ -443,22 +443,18 @@
 
     function clamp(value, minimum = 0, maximum = 1) {
       const number = Number(value);
-
       if (!Number.isFinite(number)) {
         return minimum;
       }
-
       return Math.min(maximum, Math.max(minimum, number));
     }
 
     function loadState() {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
-
         if (!saved) {
           return defaultState();
         }
-
         return {
           ...defaultState(),
           ...JSON.parse(saved)
@@ -500,7 +496,7 @@
         timestamp: now(),
         env: state.env,
         emo: state.emo,
-        ment: state.ment,
+        ment: state.mental,
         phys: state.phys,
         res: state.res,
         agency: calculated.agency,
@@ -521,7 +517,7 @@
       const agency =
         state.env +
         state.emo +
-        state.ment +
+        state.mental +
         state.phys;
 
       const merBase = agency / Math.max(state.res, 0.0001);
@@ -556,15 +552,12 @@
       if (calculated.merBase < 0.7) {
         return "Take a 10–15 minute break and reduce cognitive load.";
       }
-
       if (calculated.merBase < 1.0) {
         return "Use light work or planning tasks.";
       }
-
       if (calculated.merBase <= 1.3) {
         return "Use focused deep work.";
       }
-
       return "Use high-intensity deep work, monitor resistance, and plan a micro-break soon.";
     }
 
@@ -573,14 +566,14 @@
 
       $("envValue").textContent = state.env.toFixed(3);
       $("emoValue").textContent = state.emo.toFixed(3);
-      $("mentValue").textContent = state.ment.toFixed(3);
+      $("mentValue").textContent = state.mental.toFixed(3);
       $("physValue").textContent = state.phys.toFixed(3);
       $("resValue").textContent = state.res.toFixed(3);
 
       $("vectorValue").textContent =
         `(${state.env.toFixed(3)}, ` +
         `${state.emo.toFixed(3)}, ` +
-        `${state.ment.toFixed(3)}, ` +
+        `${state.mental.toFixed(3)}, ` +
         `${state.phys.toFixed(3)})`;
 
       $("taskValue").textContent = state.taskType;
@@ -589,10 +582,8 @@
         const seconds = Math.floor(
           (now() - state.session.start) / 1000
         );
-
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
-
         $("sessionValue").textContent =
           `${minutes}m ${remainingSeconds}s`;
       } else {
@@ -623,7 +614,6 @@
                 const time = new Date(
                   item.timestamp
                 ).toLocaleTimeString();
-
                 return `${time} — MER ${item.merBase.toFixed(2)} — ${item.label}`;
               }).join("<br>")
             : "No state history yet."
@@ -633,19 +623,17 @@
 
     function addMessage(text, sender) {
       const message = document.createElement("div");
-
       message.className = `message ${sender}`;
       message.textContent = text;
-
       $("messages").appendChild(message);
       $("messages").scrollTop = $("messages").scrollHeight;
+      return message;
     }
 
     function speak(text) {
       if (!("speechSynthesis" in window)) {
         return;
       }
-
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(
         new SpeechSynthesisUtterance(text)
@@ -660,140 +648,45 @@
       const text = message.toLowerCase();
 
       const positive = {
-        env: [
-          "quiet",
-          "comfortable",
-          "safe",
-          "peaceful",
-          "good environment",
-          "good weather",
-          "sunny"
-        ],
-        emo: [
-          "happy",
-          "calm",
-          "confident",
-          "excited",
-          "motivated",
-          "hopeful",
-          "positive"
-        ],
-        ment: [
-          "focused",
-          "clear",
-          "creative",
-          "alert",
-          "ready to learn",
-          "thinking clearly"
-        ],
-        phys: [
-          "energetic",
-          "strong",
-          "rested",
-          "healthy",
-          "awake",
-          "ready to work"
-        ]
+        env: ["quiet", "comfortable", "safe", "peaceful", "good environment", "good weather", "sunny"],
+        emo: ["happy", "calm", "confident", "excited", "motivated", "hopeful", "positive"],
+        ment: ["focused", "clear", "creative", "alert", "ready to learn", "thinking clearly"],
+        phys: ["energetic", "strong", "rested", "healthy", "awake", "ready to work"]
       };
 
       const negative = {
-        env: [
-          "noise",
-          "noisy",
-          "crowded",
-          "chaotic",
-          "uncomfortable",
-          "bad environment",
-          "cold room",
-          "hot room"
-        ],
-        emo: [
-          "sad",
-          "angry",
-          "mad",
-          "anxious",
-          "worried",
-          "stressed",
-          "upset",
-          "lonely",
-          "overwhelmed",
-          "frustrated",
-          "annoyed"
-        ],
-        ment: [
-          "confused",
-          "distracted",
-          "can't focus",
-          "cannot focus",
-          "brain fog",
-          "mentally tired",
-          "forgetful",
-          "blocked"
-        ],
-        phys: [
-          "tired",
-          "exhausted",
-          "sleepy",
-          "sick",
-          "pain",
-          "weak",
-          "physically tired"
-        ]
+        env: ["noise", "noisy", "crowded", "chaotic", "uncomfortable", "bad environment", "cold room", "hot room"],
+        emo: ["sad", "angry", "mad", "anxious", "worried", "stressed", "upset", "lonely", "overwhelmed", "frustrated", "annoyed"],
+        ment: ["confused", "distracted", "can't focus", "cannot focus", "brain fog", "mentally tired", "forgetful", "blocked"],
+        phys: ["tired", "exhausted", "sleepy", "sick", "pain", "weak", "physically tired"]
       };
 
       for (const category of ["env", "emo", "ment", "phys"]) {
+        const stateKey = category === "ment" ? "mental" : category;
         if (containsAny(text, positive[category])) {
-          state[category] += 0.08;
+          state[stateKey] += 0.08;
         }
-
         if (containsAny(text, negative[category])) {
-          state[category] -= 0.08;
+          state[stateKey] -= 0.08;
         }
       }
 
-      if (
-        containsAny(text, [
-          "break",
-          "rest",
-          "pause",
-          "relax"
-        ])
-      ) {
+      if (containsAny(text, ["break", "rest", "pause", "relax"])) {
         state.res -= 0.08;
-        state.ment += 0.02;
+        state.mental += 0.02;
         state.phys += 0.02;
       }
 
-      if (
-        containsAny(text, [
-          "pressure",
-          "deadline",
-          "difficult",
-          "hard",
-          "struggle",
-          "blocked"
-        ])
-      ) {
+      if (containsAny(text, ["pressure", "deadline", "difficult", "hard", "struggle", "blocked"])) {
         state.res += 0.08;
       }
 
-      const taskTypes = [
-        "coding",
-        "study",
-        "writing",
-        "physics",
-        "weather",
-        "planning",
-        "research"
-      ];
-
-      state.taskType =
-        taskTypes.find(type => text.includes(type)) ||
-        state.taskType;
+      const taskTypes = ["coding", "study", "writing", "physics", "weather", "planning", "research"];
+      state.taskType = taskTypes.find(type => text.includes(type)) || state.taskType;
 
       state.env = clamp(state.env);
       state.emo = clamp(state.emo);
-      state.ment = clamp(state.ment);
+      state.mental = clamp(state.mental);
       state.phys = clamp(state.phys);
       state.res = clamp(state.res, 0.01, 1);
 
@@ -802,72 +695,10 @@
       render();
     }
 
-    function sessionStart(minutes = null) {
-      state.session = {
-        start: now(),
-        plannedMinutes: minutes,
-        taskType: state.taskType
-      };
-
-      saveState();
-      render();
-
-      if (minutes) {
-        const end = new Date(
-          now() + minutes * 60 * 1000
-        ).toLocaleTimeString();
-
-        return `Work block started.
-
-Task: ${state.taskType}
-Planned duration: ${minutes} minutes
-Expected end time: ${end}
-
-Initial recommendation:
-${getAdvice(calculateState())}`;
-      }
-
-      return `Session started at ${new Date().toLocaleTimeString()}.`;
-    }
-
-    function sessionSummary() {
-      const calculated = calculateState();
-      const history = getHistory();
-
-      const startTime = state.session
-        ? state.session.start
-        : now() - 30 * 60 * 1000;
-
-      const sessionHistory = history.filter(
-        item => item.timestamp >= startTime
-      );
-
-      const average = sessionHistory.length
-        ? sessionHistory.reduce(
-            (total, item) => total + item.merBase,
-            0
-          ) / sessionHistory.length
-        : calculated.merBase;
-
-      return `Zetari.AI session summary
-
-Task type: ${state.taskType}
-Samples: ${sessionHistory.length}
-Average MER: ${average.toFixed(4)}
-Current MER: ${calculated.merBase.toFixed(4)}
-Current state: ${calculated.label}
-
-Recommendation:
-${getAdvice(calculated)}`;
-    }
-
     function runCommand(rawText) {
       const text = rawText.toLowerCase().trim();
 
-      const plan = text.match(
-        /plan block\s+(\d+)\s*minutes?/
-      );
-
+      const plan = text.match(/plan block\s+(\d+)\s*minutes?/);
       if (plan) {
         return sessionStart(Number(plan[1]));
       }
@@ -914,46 +745,103 @@ save state
 load state
 reset state
 
-You can also describe how you feel or what you are working on.`;
+You can also describe how you feel or ask Navigator a question.`;
       }
 
       if (
-        text.includes("status") ||
+        text.includes("status report") ||
         text.includes("operational") ||
         text.includes("working") ||
         text === "hi" ||
-        text === "hello" ||
-        text === "yes"
+        text === "hello"
       ) {
         render();
-
-        return `Zetari.AI is operational locally.
-
-${sessionSummary()}`;
+        return `Zetari.AI is operational locally.\n\n${sessionSummary()}`;
       }
 
       interpretMessage(rawText);
+      return `Message interpreted for task type: ${state.taskType}.\n\n${sessionSummary()}`;
+    }
 
-      return `Message interpreted for task type: ${state.taskType}.
+    function sessionStart(minutes = null) {
+      state.session = {
+        start: now(),
+        plannedMinutes: minutes,
+        taskType: state.taskType
+      };
+      saveState();
+      render();
 
-${sessionSummary()}`;
+      if (minutes) {
+        const end = new Date(now() + minutes * 60 * 1000).toLocaleTimeString();
+        return `Work block started.\n\nTask: ${state.taskType}\nPlanned duration: ${minutes} minutes\nExpected end time: ${end}\n\nInitial recommendation:\n${getAdvice(calculateState())}`;
+      }
+      return `Session started at ${new Date().toLocaleTimeString()}.`;
+    }
+
+    function sessionSummary() {
+      const calculated = calculateState();
+      const history = getHistory();
+      const startTime = state.session ? state.session.start : now() - 30 * 60 * 1000;
+      const sessionHistory = history.filter(item => item.timestamp >= startTime);
+      const average = sessionHistory.length
+        ? sessionHistory.reduce((total, item) => total + item.merBase, 0) / sessionHistory.length
+        : calculated.merBase;
+
+      return `Zetari.AI session summary\n\nTask type: ${state.taskType}\nSamples: ${sessionHistory.length}\nAverage MER: ${average.toFixed(4)}\nCurrent MER: ${calculated.merBase.toFixed(4)}\nCurrent state: ${calculated.label}\n\nRecommendation:\n${getAdvice(calculated)}`;
+    }
+
+    async function processUserPrompt(text) {
+      if (!text) return;
+
+      addMessage(text, "user");
+
+      const lower = text.toLowerCase().trim();
+      const isCommand = lower.startsWith("plan block") || 
+                        lower === "start session" || 
+                        lower === "end session" || 
+                        lower === "summary" || 
+                        lower === "save state" || 
+                        lower === "load state" || 
+                        lower === "reset state" || 
+                        lower === "status report" || 
+                        lower === "help";
+
+      if (isCommand) {
+        const response = runCommand(text);
+        addMessage(response, "bot");
+        speak(response);
+        return;
+      }
+
+      // Update state numbers
+      interpretMessage(text);
+
+      // Route to Python backend / Ollama
+      const loading = addMessage("Navigator computing...", "bot");
+
+      try {
+        const res = await fetch("http://localhost:8000/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: text })
+        });
+        const data = await res.json();
+        loading.textContent = data.response || "No response received.";
+        speak(loading.textContent);
+      } catch (err) {
+        const fallback = runCommand(text);
+        loading.textContent = fallback;
+        speak(fallback);
+      }
     }
 
     function sendMessage() {
       const input = $("userInput");
       const text = input.value.trim();
-
-      if (!text) {
-        return;
-      }
-
-      addMessage(text, "user");
+      if (!text) return;
       input.value = "";
-
-      const response = runCommand(text);
-
-      addMessage(response, "bot");
-      speak(response);
+      processUserPrompt(text);
     }
 
     function initializeVoice() {
@@ -966,7 +854,6 @@ ${sessionSummary()}`;
       }
 
       const recognizer = new SpeechRecognition();
-
       recognizer.continuous = false;
       recognizer.interimResults = false;
       recognizer.lang = "en-US";
@@ -978,22 +865,12 @@ ${sessionSummary()}`;
       };
 
       recognizer.onresult = function(event) {
-        const transcript =
-          event.results[0][0].transcript;
-
-        addMessage(transcript, "user");
-
-        const response = runCommand(transcript);
-
-        addMessage(response, "bot");
-        speak(response);
+        const transcript = event.results[0][0].transcript;
+        processUserPrompt(transcript);
       };
 
       recognizer.onerror = function() {
-        addMessage(
-          "Voice input failed. Please type instead.",
-          "bot"
-        );
+        addMessage("Voice input failed. Please type instead.", "bot");
       };
 
       recognizer.onend = function() {
@@ -1042,13 +919,7 @@ ${sessionSummary()}`;
       .forEach(button => {
         button.addEventListener("click", function() {
           const command = button.dataset.command;
-
-          addMessage(command, "user");
-
-          const response = runCommand(command);
-
-          addMessage(response, "bot");
-          speak(response);
+          processUserPrompt(command);
         });
       });
 
@@ -1056,7 +927,7 @@ ${sessionSummary()}`;
     render();
 
     addMessage(
-      "Navigator ready. Describe how you feel or what you are working on to start a session.",
+      "Navigator ready. Describe how you feel or ask an operational question to begin.",
       "bot"
     );
 
@@ -1068,10 +939,7 @@ ${sessionSummary()}`;
             console.log("Zetari.AI offline service worker active.");
           })
           .catch(error => {
-            console.warn(
-              "Service worker registration failed:",
-              error
-            );
+            console.warn("Service worker registration failed:", error);
           });
       });
     }
