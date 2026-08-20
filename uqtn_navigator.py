@@ -47,3 +47,12 @@ GAP_CHRONONS = ZETA_GAPS / CHRONON_PERIOD
 
 # ──────────────────────────────────────────────────────────
 # DAEMON OPERATORS (constraint 
+
+if __name__ == "__main__":
+    # Example usage of the UQTN Navigator algorithm
+    print("UQTN Navigator Algorithm Initialized")
+    print(f"Chronon Period: {CHRONON_PERIOD} seconds")
+    print(f"Max Chronons per Day: {MAX_CHRONONS_DAY}")
+    print(f"First 5 Zeta Zeros: {ZETA_ZEROS[:5]}")
+    print(f"First 5 Zeta Gaps: {ZETA_GAPS[:5]}")
+    print(f"First 5 Gap Chronons: {GAP_CHRONONS[:5]}")
