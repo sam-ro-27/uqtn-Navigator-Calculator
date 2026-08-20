@@ -1,447 +1,158 @@
-# api_server.py
-
-from __future__ import annotations
-
-from typing import Any, Dict, Optional
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-
-from uqtn_math import (
-    UQTNInput,
-    calculate_branches,
-    classify_branches,
-)
-
-
-PHI = 1.618033988749895
-
-
-app = FastAPI(
-    title="Zetari.AI Local UQTN Navigator",
-    version="2.0.0",
-)
-
-
-# Local development and GitHub Pages origins.
-# No cloud API is used by this server.
-ALLOWED_ORIGINS = [
-    "http://localhost",
-    "http://localhost:5500",
-    "http://localhost:8000",
-    "http://127.0.0.1:5500",
-    "http://127.0.0.1:8000",
-    "https://sam-ro-27.github.io",
-]
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=False,
-    allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["*"],
-)
-
-
-class StatePayload(BaseModel):
-    """State submitted by the browser interface."""
-
-    env: float = Field(default=0.2, ge=0.0, le=1.0)
-    emo: float = Field(default=0.2, ge=0.0, le=1.0)
-    ment: float = Field(default=0.2, ge=0.0, le=1.0)
-    phys: float = Field(default=0.2, ge=0.0, le=1.0)
-    res: float = Field(default=0.2, ge=0.0001, le=1.0)
-
-    mass: float = Field(default=1.0, ge=0.0)
-    energy: Optional[float] = Field(default=None, ge=0.0)
-
-    theta: float = 0.0
-    theta_critical: float = 0.0
-
-    focus: str = ""
-    notes: str = ""
-    task_type: str = "general"
-
-
-class RespondPayload(BaseModel):
-    """Message and current browser state."""
-
-    message: str
-    state: StatePayload
-
-
-def classify_navigator_state(
-    agency: float,
-    resistance: float,
-    mer: float,
-) -> Dict[str, str]:
-    """Classify the current Navigator state."""
-    if agency <= 0:
-        return {
-            "state": "no_agency",
-            "stateLabel": "Navigator not active",
-            "advice": "No active navigation is happening yet.",
-        }
-
-    if mer > PHI:
-        return {
-            "state": "above_phi",
-            "stateLabel": "Above phi",
-            "advice": "Your current state supports focused work.",
-        }
-
-    if abs(mer - PHI) < 1e-6:
-        return {
-            "state": "at_phi",
-            "stateLabel": "At phi threshold",
-            "advice": "You are right at the coherence threshold.",
-        }
-
-    return {
-        "state": "below_phi",
-        "stateLabel": "Below phi",
-        "advice": (
-            "Resistance is currently dominant. "
-            "Consider reducing load or taking a short break."
-        ),
-    }
-
-
-def calculate_state(
-    state: StatePayload,
-) -> Dict[str, Any]:
-    """Calculate Navigator state and all UQTN branches."""
-    agency = (
-        state.env
-        + state.emo
-        + state.ment
-        + state.phys
-    )
-
-    resistance = max(state.res, 0.0001)
-
-    navigator_mer = (
-        agency / resistance
-    ) * PHI
-
-    energy = (
-        state.energy
-        if state.energy is not None
-        else agency
-    )
-
-    uqtn_input = UQTNInput(
-        mass=state.mass,
-        energy=energy,
-        resistance=resistance,
-        agency=agency,
-        theta=state.theta,
-        theta_critical=state.theta_critical,
-    )
-
-    branch_result = calculate_branches(uqtn_input)
-    branch_labels = classify_branches(branch_result)
-    classification = classify_navigator_state(
-        agency=agency,
-        resistance=resistance,
-        mer=navigator_mer,
-    )
-
-    return {
-        "env": state.env,
-        "emo": state.emo,
-        "ment": state.ment,
-        "phys": state.phys,
-        "resistance": resistance,
-        "mass": state.mass,
-        "energy": energy,
-        "agency": agency,
-        "navigator_mer": navigator_mer,
-        "phi": PHI,
-        "task_type": state.task_type,
-        "focus": state.focus,
-        "notes": state.notes,
-        "theta": state.theta,
-        "theta_critical": state.theta_critical,
-        "state": classification["state"],
-        "stateLabel": classification["stateLabel"],
-        "advice": classification["advice"],
-        "uqtn_input": branch_result["inputs"],
-        "uqtn_branches": branch_result["branches"],
-        "uqtn_branch_labels": branch_labels,
-        "effective_resistance": branch_result[
-            "effective_resistance"
-        ],
-        "phi_identity_check": branch_result[
-            "phi_identity_check"
-        ],
-    }
-
-
-def infer_intent(message: str) -> str:
-    """Classify common local Navigator intents."""
-    text = message.lower().strip()
-
-    if any(
-        phrase in text
-        for phrase in (
-            "what can you do",
-            "what do you do",
-            "help",
-            "commands",
-            "capabilities",
-        )
-    ):
-        return "help"
-
-    if "why" in text and "resist" in text:
-        return "resistance_analysis"
-
-    if (
-        "what changed" in text
-        or "different" in text
-    ):
-        return "change_detection"
-
-    if (
-        "what should i do" in text
-        or "what next" in text
-        or "next step" in text
-    ):
-        return "next_action"
-
-    if (
-        "status" in text
-        or "report" in text
-        or "operational" in text
-    ):
-        return "status_report"
-
-    if (
-        "should i" in text
-        or "can i" in text
-        or "am i able" in text
-    ):
-        return "permission_check"
-
-    if any(
-        word in text
-        for word in (
-            "study",
-            "work",
-            "focus",
-            "coding",
-            "writing",
-            "physics",
-        )
-    ):
-        return "focus_guidance"
-
-    return "open_guidance"
-
-
-def generate_reply(
-    message: str,
-    payload_state: StatePayload,
-    summary: Dict[str, Any],
-) -> str:
-    """Generate a deterministic local Navigator response."""
-    intent = infer_intent(message)
-
-    focus_text = (
-        f" Current focus: {payload_state.focus}."
-        if payload_state.focus
-        else ""
-    )
-
-    task_text = (
-        f" Task type: {payload_state.task_type}."
-        if payload_state.task_type
-        else ""
-    )
-
-    if intent == "help":
-        return (
-            "Zetari.AI is running as a local UQTN Navigator.\n\n"
-            "I can:\n"
-            "- calculate Navigator state\n"
-            "- calculate parallel UQTN MER branches\n"
-            "- explain resistance\n"
-            "- suggest the next action\n"
-            "- assess focused-work readiness\n"
-            "- report zeta and MER state when connected\n\n"
-            "Try: status report, why is resistance high?, "
-            "what should I do next?, or can I focus right now?"
-        )
-
-    if intent == "status_report":
-        return (
-            "Zetari.AI status report:\n"
-            f"Agency: {summary['agency']:.4f}\n"
-            f"Resistance: {summary['resistance']:.4f}\n"
-            f"Navigator MER: {summary['navigator_mer']:.4f}\n"
-            f"MER base: "
-            f"{summary['uqtn_branches']['inverse_resistance']:.4f}\n"
-            f"MER × phi: "
-            f"{summary['uqtn_branches']['standard_drag']:.4f}\n"
-            f"MER ÷ phi: "
-            f"{summary['uqtn_branches']['reciprocal_phi']:.4f}\n"
-            f"State: {summary['stateLabel']}\n\n"
-            f"{summary['advice']}{focus_text}{task_text}"
-        )
-
-    if intent == "resistance_analysis":
-        resistance = summary["resistance"]
-
-        if resistance >= 0.7:
-            return (
-                "Resistance is high relative to current agency. "
-                "Reduce task size and remove one blocker first."
-                f"{focus_text}{task_text}"
-            )
-
-        if resistance >= 0.4:
-            return (
-                "Resistance is moderate. Narrow the scope and "
-                "reduce switching cost."
-                f"{focus_text}{task_text}"
-            )
-
-        return (
-            "Resistance is relatively low. The next challenge may "
-            "be selecting a clear first move."
-            f"{focus_text}{task_text}"
-        )
-
-    if intent == "permission_check":
-        if (
-            summary["state"] == "above_phi"
-            and summary["ment"] >= 0.5
-        ):
-            return (
-                "Yes. Your current state supports focused work."
-                f"{focus_text}{task_text}"
-            )
-
-        if summary["state"] == "at_phi":
-            return (
-                "You can work, but use a short, bounded block."
-                f"{focus_text}{task_text}"
-            )
-
-        return (
-            "Reduce the load or recover before starting demanding work."
-            f"{focus_text}{task_text}"
-        )
-
-    if intent == "focus_guidance":
-        if summary["state"] == "above_phi":
-            return (
-                "Your state supports focused work. Choose one bounded "
-                "task and begin."
-                f"{focus_text}{task_text}"
-            )
-
-        if summary["state"] == "at_phi":
-            return (
-                "Use a short planning or focus block and reassess."
-                f"{focus_text}{task_text}"
-            )
-
-        return (
-            "Focused work may be costly right now. Reduce friction or "
-            "take a short recovery period first."
-            f"{focus_text}{task_text}"
-        )
-
-    if intent == "next_action":
-        if summary["state"] == "above_phi":
-            return (
-                "Your next move should be execution. Pick one bounded "
-                "task and begin."
-                f"{focus_text}{task_text}"
-            )
-
-        if summary["resistance"] > 0.5:
-            return (
-                "Your next move should be friction reduction. Remove "
-                "one obstacle before pushing harder."
-                f"{focus_text}{task_text}"
-            )
-
-        return (
-            "Your next move should be stabilization. Reduce noise, "
-            "recover energy, and reassess."
-            f"{focus_text}{task_text}"
-        )
-
-    if intent == "change_detection":
-        return (
-            "Change detection is not yet connected to persistent "
-            "episode history. The current state has been calculated "
-            "from this request."
-            f"{focus_text}{task_text}"
-        )
-
-    return (
-        f"Zetari.AI interpreted the request locally. "
-        f"Current state: {summary['stateLabel']}. "
-        f"Navigator MER: {summary['navigator_mer']:.4f}. "
-        f"{summary['advice']}{focus_text}{task_text}"
-    )
-
-
-@app.get("/")
-async def root() -> Dict[str, str]:
-    """Service health endpoint."""
-    return {
-        "status": "online",
-        "service": "Zetari.AI Local UQTN Navigator",
-        "version": "2.0.0",
-        "mode": "local",
-    }
-
-
-@app.get("/health")
-async def health() -> Dict[str, str]:
-    """Simple health check."""
-    return {
-        "status": "healthy",
-        "service": "Zetari.AI",
-    }
-
-
-@app.post("/api/respond")
-async def respond(
-    payload: RespondPayload,
-) -> Dict[str, Any]:
-    """Process a browser message through the local Navigator engine."""
-    summary = calculate_state(payload.state)
-    reply = generate_reply(
-        message=payload.message,
-        payload_state=payload.state,
-        summary=summary,
-    )
-
-    return {
-        "mode": "local_backend",
-        "reply": reply,
-        "state": summary,
-    }
-
-def main() -> None:
-    """Start the local Zetari.AI API server."""
-    import uvicorn
-
-    uvicorn.run(
-        "api_server:app",
-        host="127.0.0.1",
-        port=8000,
-        reload=False,
-    )
+"""
+api_server.py — Unified Hub connecting all UQTN modules, Memory, and Ollama
+"""
+import json
+import os
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import ollama
+
+# Import your mathematical and memory modules
+try:
+    import uqtn_math
+except ImportError:
+    uqtn_math = None
+
+try:
+    import zeta_lattice
+except ImportError:
+    zeta_lattice = None
+
+try:
+    import memory
+except ImportError:
+    memory = None
+
+PORT = 8000
+ACTIVE_STATE_FILE = "active_state.txt"
+MEMORY_BRIDGE_FILE = "memory_bridge.txt"
+
+SYSTEM_CONTEXT = """
+You are the UQTN Navigator, an offline co-navigator inside the Unified Quantum-Temporal Navigation framework.
+
+UQTN LOCKED DEFINITIONS:
+- Master Equation: MER = (Mass * Energy) / Resistance
+- Phi Duality Gate: phi is applied bidirectionally (* phi and / phi simultaneously side by side).
+- Duality of Phi: Represents forward (* phi) and conjugate (/ phi) operational scaling channels.
+- Operational Form: MER = Agency * (1 - Resistance) * phi (forward) and MER = Agency * (1 - Resistance) / phi (conjugate).
+- phi = 1.618033988749895
+- chronon period = 1.48752 seconds
+- max chronons per day = 58083.25266214908
+- zeta-zero anchors and zeta gaps form the navigation lattice.
+- Locked baseline: Agency = 0.8, Resistance = 0.2 gives MER = 1.0355 (forward)
+
+RULES:
+1. When asked for the master equation or phi duality, state: MER = (Mass * Energy) / Resistance, with simultaneous * phi and / phi operations side-by-side.
+2. State that Agency represents unified Mass and Energy, and Resistance operates as (1 - Resistance) in simulation.
+3. Do not invent outside acronym expansions for MER.
+4. If technical concepts fall outside this context, state: "That is not defined in the current UQTN context."
+5. Keep answers concise, factual, and aligned to these definitions.
+"""
+
+
+class UnifiedNavigatorHandler(BaseHTTPRequestHandler):
+
+    def _set_cors_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self._set_cors_headers()
+        self.end_headers()
+
+    def do_GET(self):
+        if self.path == "/" or self.path == "/index.html":
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            self._set_cors_headers()
+            self.end_headers()
+            with open("index.html", "rb") as f:
+                self.wfile.write(f.read())
+            return
+
+        if self.path == "/api/state":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self._set_cors_headers()
+            self.end_headers()
+
+            # Read active state from file
+            state_data = {"status": "active"}
+            if os.path.exists(ACTIVE_STATE_FILE):
+                try:
+                    with open(ACTIVE_STATE_FILE, "r") as f:
+                        state_data["active_state"] = f.read()
+                except Exception as e:
+                    state_data["error"] = str(e)
+
+            self.wfile.write(json.dumps(state_data).encode("utf-8"))
+            return
+
+        self.send_response(404)
+        self.end_headers()
+
+    def do_POST(self):
+        content_len = int(self.headers.get("Content-Length", 0))
+        post_body = self.rfile.read(content_len).decode("utf-8")
+        payload = json.loads(post_body) if post_body else {}
+
+        if self.path == "/api/chat":
+            user_prompt = payload.get("prompt", "")
+
+            # Query local Ollama model
+            try:
+                response = ollama.chat(
+                    model="llama3.2:latest",
+                    messages=[
+                        {"role": "system", "content": SYSTEM_CONTEXT},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                )
+                reply_text = response["message"]["content"]
+            except Exception as e:
+                reply_text = f"Ollama connection error: {e}"
+
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self._set_cors_headers()
+            self.end_headers()
+            self.wfile.write(json.dumps({"response": reply_text}).encode("utf-8"))
+            return
+
+        if self.path == "/api/calculate":
+            # Direct bridge to uqtn_math calculation
+            agency = float(payload.get("agency", 0.8))
+            resistance = float(payload.get("resistance", 0.2))
+            phi = 1.618033988749895
+
+            mer_fwd = agency * (1.0 - resistance) * phi
+            mer_conj = agency * (1.0 - resistance) / phi
+
+            res = {
+                "agency": agency,
+                "resistance": resistance,
+                "mer_forward": mer_fwd,
+                "mer_conjugate": mer_conj,
+                "regime": "MOTIVATIONAL" if mer_fwd > agency else "DISSIPATIVE",
+            }
+
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self._set_cors_headers()
+            self.end_headers()
+            self.wfile.write(json.dumps(res).encode("utf-8"))
+            return
+
+
+def run_server():
+    server = HTTPServer(("localhost", PORT), UnifiedNavigatorHandler)
+    print(f"==================================================")
+    print(f"UQTN Unified Server Running on http://localhost:{PORT}")
+    print(f"Connected: UI + Ollama + Math + Memory")
+    print(f"==================================================")
+    server.serve_forever()
 
 
 if __name__ == "__main__":
-    main()
+    run_server()
