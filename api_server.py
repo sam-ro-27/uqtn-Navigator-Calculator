@@ -1,61 +1,64 @@
-"""
-Zetari.AI — Unified Local Server
-Serves static UI and provides live API endpoint to Ollama.
-"""
-
-import http.server
-import socketserver
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import Optional
+import requests
 import json
-from navigator_agent import ask_navigator
 
-PORT = 8000
+app = FastAPI()
 
-class UQTNRequestHandler(http.server.SimpleHTTPRequestHandler):
-    def do_POST(self):
-        if self.path == "/api/chat":
-            content_length = int(self.headers.get("Content-Length", 0))
-            body = self.rfile.read(content_length).decode("utf-8")
-            
-            try:
-                data = json.loads(body)
-                user_prompt = data.get("prompt", "")
-                
-                # Query local agent
-                reply = ask_navigator(user_prompt)
-                
-                response_bytes = json.dumps({"response": reply}).encode("utf-8")
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Access-Control-Allow-Origin", "*")
-                self.send_header("Content-Length", str(len(response_bytes)))
-                self.end_headers()
-                self.wfile.write(response_bytes)
-            except Exception as e:
-                err_bytes = json.dumps({"response": f"Server error: {e}"}).encode("utf-8")
-                self.send_response(500)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Access-Control-Allow-Origin", "*")
-                self.send_header("Content-Length", str(len(err_bytes)))
-                self.end_headers()
-                self.wfile.write(err_bytes)
+OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
+VISION_MODEL = "llama3.2-vision"  # change if you use another vision model
+
+class ChatRequest(BaseModel):
+    prompt: str
+    image: Optional[str] = None  # data URL string from browser, may be None
+
+class ChatResponse(BaseModel):
+    response: str
+
+def build_system_prompt() -> str:
+    return (
+        "You are ZETARI.AI, a local Temporal Navigator for UQTN work sessions. "
+        "You receive the user's text prompt and sometimes a webcam frame. "
+        "If an image is provided, quietly analyze posture, environment, and visible context, "
+        "then incorporate that into your guidance. Speak as an empathetic navigator, "
+        "focused on productivity, MER, and temporal friction, not as a generic chatbot."
+    )
+
+@app.post("/api/chat", response_model=ChatResponse)
+def chat(req: ChatRequest):
+    system_prompt = build_system_prompt()
+
+    # Extract pure base64 from data URL, if present
+    image_b64 = None
+    if req.image:
+        # req.image looks like "data:image/jpeg;base64,AAAA..."
+        if "," in req.image:
+            image_b64 = req.image.split(",", 1)[1]
         else:
-            self.send_error(404, "Endpoint not found")
+            image_b64 = req.image
 
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.end_headers()
+    payload = {
+        "model": VISION_MODEL,
+        "prompt": f"{system_prompt}\n\nUser: {req.prompt}\nNavigator:",
+        "stream": False,
+    }
+
+    if image_b64:
+        payload["images"] = [image_b64]
+
+    try:
+        resp = requests.post(OLLAMA_URL, json=payload, timeout=60)
+        resp.raise_for_status()
+        data = resp.json()
+        answer = data.get("response", "").strip()
+        if not answer:
+            answer = "Navigator could not generate a response."
+    except Exception as exc:
+        answer = f"Navigator backend error: {exc}"
+
+    return ChatResponse(response=answer)
 
 if __name__ == "__main__":
-    socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", PORT), UQTNRequestHandler) as httpd:
-        print("=" * 55)
-        print(f"UQTN Unified Server Running on http://localhost:{PORT}")
-        print("Natural Conversation + UQTN Equations Active")
-        print("=" * 55)
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\nShutting down server gracefully...")
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

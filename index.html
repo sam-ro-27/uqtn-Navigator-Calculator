@@ -89,6 +89,7 @@
       font-weight: 700;
     }
 
+    /* Webcam box */
     .webcam-container {
       margin-bottom: 14px;
       border-radius: 8px;
@@ -494,9 +495,28 @@
           audio: false
         });
         videoEl.srcObject = stream;
+        console.log("Webcam stream started.");
       } catch (err) {
         console.warn("Optical feed auto-start notice:", err.message);
       }
+    }
+
+    // Capture one frame from the live webcam and return a data URL
+    function captureWebcamFrame() {
+      const video = $("liveWebcam");
+      if (!video || !video.srcObject || video.videoWidth === 0 || video.videoHeight === 0) {
+        return null;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // JPEG data URL: "data:image/jpeg;base64,..."
+      return canvas.toDataURL("image/jpeg", 0.85);
     }
 
     function defaultState() {
@@ -931,10 +951,15 @@ You can also describe how you feel or ask Navigator a question.`;
       const loading = addMessage("Navigator computing...", "bot");
 
       try {
+        const webcamFrame = captureWebcamFrame();
+
         const res = await fetch("http://localhost:8000/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: text })
+          body: JSON.stringify({
+            prompt: text,
+            image: webcamFrame
+          })
         });
         const data = await res.json();
         loading.textContent = data.response || "No response received.";
