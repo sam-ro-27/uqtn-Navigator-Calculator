@@ -739,10 +739,6 @@
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
 
-      if (availableVoices.length === 0) {
-        populateVoices();
-      }
-
       if (voiceMode === "natural") {
         const naturalVoice = availableVoices.find(v =>
           v.name.includes("Natural") ||
@@ -867,18 +863,7 @@
       }
 
       if (text.includes("help")) {
-        return `Available commands:
-
-status report
-start session
-plan block 30 minutes
-summary
-end session
-save state
-load state
-reset state
-
-You can also describe how you feel or ask Navigator a question.`;
+        return `Available commands:\n\nstatus report\nstart session\nplan block 30 minutes\nsummary\nend session\nsave state\nload state\nreset state\n\nYou can also describe how you feel or ask Navigator a question.`;
       }
 
       if (

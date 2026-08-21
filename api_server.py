@@ -1,9 +1,19 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
-import requests
+import httpx
 
 app = FastAPI()
+
+# CORS frequency injection to eliminate boundary friction
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Opens the bridge to all local ports
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Use Ollama's /api/chat endpoint for multimodal vision models
 OLLAMA_CHAT_URL = "http://127.0.0.1:11434/api/chat"
@@ -29,7 +39,7 @@ def build_system_prompt() -> str:
     )
 
 @app.post("/api/chat", response_model=ChatResponse)
-def chat(req: ChatRequest):
+async def chat(req: ChatRequest):
     system_prompt = build_system_prompt()
 
     # Extract pure base64 string from data URL
@@ -58,16 +68,19 @@ def chat(req: ChatRequest):
     }
 
     try:
-        resp = requests.post(OLLAMA_CHAT_URL, json=payload, timeout=90)
-        resp.raise_for_status()
-        data = resp.json()
-        answer = data.get("message", {}).get("content", "").strip()
-        if not answer:
-            answer = "Navigator could not generate a response."
+        # Utilizing async httpx to maintain optimal thermodynamic flow
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(OLLAMA_CHAT_URL, json=payload, timeout=90.0)
+            resp.raise_for_status()
+            data = resp.json()
+            answer = data.get("message", {}).get("content", "").strip()
+            if not answer:
+                answer = "Navigator could not generate a response."
     except Exception as exc:
         answer = f"Navigator backend error: {exc}"
 
     return ChatResponse(response=answer)
+
 @app.get("/")
 def root():
     return {"status": "ZETARI.AI backend is running"}
