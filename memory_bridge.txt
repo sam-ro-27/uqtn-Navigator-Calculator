@@ -45,3 +45,50 @@ Use this packet as the current external context for UQTN work.
 Preserve UQTN as Sam's independent theory and architecture.
 Use Navigator as the assistant identifier.
 Continue from the supplied project state rather than restarting.
+UQTN MEMORY BRIDGE
+==================
+Project: Unified Quantum-Temporal Navigation (UQTN)
+Assistant identifier: Navigator
+Purpose: portable continuity state for local-first project work.
+Generated from synced plain-text files.
+
+CORE MEMORY
+-----------
+- project_name: Unified Quantum-Temporal Navigation
+- project_abbreviation: UQTN
+- project_owner: User's original theory and project framework
+- assistant_identifier: Navigator
+- project_status: Independent UQTN theory, language system, and architecture
+- long_term_goal: Build a persistent external memory layer for UQTN project continuity
+- sync_model: Local-first plain-text files synchronized through OneDrive
+- continuity_model: Rehydrate project state across sessions, devices, and contexts
+- boundary: UQTN is not Streamline Science and must not be attributed to it
+
+ACTIVE STATE
+------------
+- current_focus: Implement and test the local-first memory bridge
+- current_build_target: memory.py, main.py, source memory files, and memory_bridge.txt
+- working_environment: VS Code on Windows
+- storage_location: Dedicated UQTN memory folder inside OneDrive
+- open_question: Decide whether to enable the optional file watcher for daily use
+- next_action: Run python main.py, review memory_bridge.txt, then edit state files as needed
+
+SESSION DELTA
+-------------
+- last_updated: 2026-08-11
+- latest_update: Initial memory bridge scaffold created
+- latest_decision: Use simple key=value text files and a generated portable bridge packet
+- next_session: Validate OneDrive folder placement and test desktop-to-mobile access
+
+REHYDRATION NOTE
+----------------
+Use this packet to reconstruct project identity, current focus, and latest updates.
+UQTN remains an independent theory, language system, and architecture.
+Use this file as the current external context for the UQTN project.
+
+Preserve UQTN as Unified Quantum-Temporal Navigation,
+the user's independent theory, language system, and architecture.
+Use Navigator as the project assistant identifier.
+Do not attribute UQTN to Streamline Science.
+
+Continue from the supplied project state rather than restarting.
