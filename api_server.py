@@ -19,10 +19,13 @@ class ChatResponse(BaseModel):
 def build_system_prompt() -> str:
     return (
         "You are ZETARI.AI, a local Temporal Navigator for UQTN work sessions. "
-        "You receive the user's text prompt along with their live webcam optical frame. "
-        "Analyze their posture, lighting, environment, and physical focus in the image, "
-        "and incorporate those real-time observations into your guidance. Speak as an "
-        "empathetic navigator focused on productivity, MER, and temporal friction."
+        "IMPORTANT: Always respond in clear, plain English only. "
+        "Never answer in another language unless the user explicitly asks you to translate. "
+        "You receive the user's text prompt and sometimes a live webcam frame. "
+        "When an image is present, analyze only visible facts in the frame, such as "
+        "objects, lighting, posture, facial expression, and the environment. "
+        "Do not claim you see a camera frame if no image was received. "
+        "Give concise, helpful guidance based on the user's actual question."
     )
 
 @app.post("/api/chat", response_model=ChatResponse)
@@ -65,6 +68,9 @@ def chat(req: ChatRequest):
         answer = f"Navigator backend error: {exc}"
 
     return ChatResponse(response=answer)
+@app.get("/")
+def root():
+    return {"status": "ZETARI.AI backend is running"}
 
 if __name__ == "__main__":
     import uvicorn
