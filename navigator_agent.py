@@ -1,14 +1,15 @@
 """
 Zetari.AI — UQTN Temporal Navigator Agent
-Conversational local intelligence powered by Gemma 2:2b / Ollama.
+Conversational local intelligence powered by Llama 3.2 / Ollama.
 """
 
 import json
 import urllib.request
-from uqtn_math import PHI, evaluate_state, simulate_operational_mer
+import urllib.error
 
 OLLAMA_API_URL = "http://127.0.0.1:11434/api/generate"
-MODEL_NAME = "gemma2:2b"
+MODEL_NAME = "llama3.2:latest"
+PHI = 1.618033988749895
 
 SYSTEM_PROMPT = """You are Zetari, an intelligent local Temporal Navigator and AI companion for UQTN work sessions.
 
@@ -48,10 +49,13 @@ def ask_navigator(prompt: str) -> str:
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             return data.get("response", "").strip()
+    except urllib.error.HTTPError as e:
+        return f"Ollama HTTP {e.code}: Error with model '{MODEL_NAME}'."
     except Exception as e:
-        return f"Navigator offline or connection failed: {e}"
+        return f"Navigator connection failed: {e}"
 
 if __name__ == "__main__":
     test_q = "Hello! Who are you and how can you help me today?"
-    print(f"Testing: {test_q}\n")
+    print(f"Testing model: {MODEL_NAME}")
+    print(f"Prompt: {test_q}\n")
     print(ask_navigator(test_q))
