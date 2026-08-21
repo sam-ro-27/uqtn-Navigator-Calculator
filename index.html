@@ -392,14 +392,14 @@
               placeholder="Ask Navigator a question or describe how you feel..."
             >
 
-            <!-- VOICE TOGGLE BUTTON -->
+            <!-- VOICE SELECTOR BUTTON -->
             <button
               id="voiceToggle"
               type="button"
               class="ghost-button"
               title="Click to toggle voice profile"
             >
-              🎙️ Voice: Deep
+              🎙️ Voice: Natural Human
             </button>
 
             <button
@@ -434,7 +434,7 @@
     let recognition = null;
     let listening = false;
     let state = loadState();
-    let voiceMode = "deep"; // "deep" or "hawking"
+    let voiceMode = "natural"; // "natural" or "synth"
     let availableVoices = [];
 
     function $(id) {
@@ -669,31 +669,34 @@
         populateVoices();
       }
 
-      if (voiceMode === "deep") {
-        const deepVoice = availableVoices.find(v =>
-          (v.name.includes("Natural") && (v.name.includes("Male") || v.name.includes("Guy") || v.name.includes("David"))) ||
-          v.name.includes("David") ||
+      if (voiceMode === "natural") {
+        // Find high-quality Microsoft Natural neural voices (smooth human delivery)
+        const naturalVoice = availableVoices.find(v =>
+          v.name.includes("Natural") ||
+          v.name.includes("Online") ||
+          v.name.includes("Christopher") ||
           v.name.includes("Guy") ||
-          v.name.includes("George") ||
-          v.name.includes("Mark") ||
-          (v.lang.startsWith("en") && !v.name.includes("Zira") && !v.name.includes("Female") && !v.name.includes("Jenny"))
+          v.name.includes("Eric") ||
+          v.name.includes("Jenny")
         );
-        if (deepVoice) {
-          utterance.voice = deepVoice;
+
+        if (naturalVoice) {
+          utterance.voice = naturalVoice;
+          utterance.pitch = 0.95;
+          utterance.rate = 1.0;
+        } else {
+          // Fallback to deepest local male voice
+          const maleVoice = availableVoices.find(v => v.name.includes("David") || v.lang.startsWith("en"));
+          if (maleVoice) utterance.voice = maleVoice;
+          utterance.pitch = 0.75;
+          utterance.rate = 0.88;
         }
-        utterance.pitch = 0.72;
-        utterance.rate = 0.88;
       } else {
-        const synthVoice = availableVoices.find(v =>
-          v.name.includes("Desktop") ||
-          v.name.includes("David") ||
-          v.name.includes("English")
-        );
-        if (synthVoice) {
-          utterance.voice = synthVoice;
-        }
-        utterance.pitch = 1.05;
-        utterance.rate = 0.98;
+        // Stephen Hawking robotic synthesizer mode
+        const synthVoice = availableVoices.find(v => v.name.includes("Desktop") || v.name.includes("David"));
+        if (synthVoice) utterance.voice = synthVoice;
+        utterance.pitch = 1.1;
+        utterance.rate = 1.0;
       }
 
       window.speechSynthesis.speak(utterance);
@@ -962,9 +965,9 @@ You can also describe how you feel or ask Navigator a question.`;
     $("micButton").addEventListener("click", toggleVoice);
 
     $("voiceToggle").addEventListener("click", function() {
-      voiceMode = voiceMode === "deep" ? "hawking" : "deep";
-      this.textContent = voiceMode === "deep" ? "🎙️ Voice: Deep" : "🤖 Voice: Hawking";
-      speak(`Voice profile switched to ${voiceMode === "deep" ? "Deep Baritone" : "Stephen Hawking mode"}.`);
+      voiceMode = voiceMode === "natural" ? "synth" : "natural";
+      this.textContent = voiceMode === "natural" ? "🎙️ Voice: Natural Human" : "🤖 Voice: Synth Robot";
+      speak(`Voice profile switched to ${voiceMode === "natural" ? "Natural Human Narrator" : "Synthesizer Mode"}.`);
     });
 
     $("userInput").addEventListener(
@@ -992,19 +995,6 @@ You can also describe how you feel or ask Navigator a question.`;
       "Navigator ready. Describe how you feel or ask an operational question to begin.",
       "bot"
     );
-
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function() {
-        navigator.serviceWorker
-          .register("./sw.js")
-          .then(() => {
-            console.log("Zetari.AI offline service worker active.");
-          })
-          .catch(error => {
-            console.warn("Service worker registration failed:", error);
-          });
-      });
-    }
   </script>
 </body>
 </html>

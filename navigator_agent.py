@@ -33,6 +33,7 @@ def ask_navigator(prompt: str) -> str:
         "model": MODEL_NAME,
         "prompt": full_prompt,
         "stream": False,
+        "keep_alive": "24h",
         "options": {
             "temperature": 0.7,
             "top_p": 0.9,
@@ -46,7 +47,7 @@ def ask_navigator(prompt: str) -> str:
             data=json.dumps(payload).encode("utf-8"),
             headers={"Content-Type": "application/json"}
         )
-        with urllib.request.urlopen(req, timeout=30) as resp:
+        with urllib.request.urlopen(req, timeout=60) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             return data.get("response", "").strip()
     except urllib.error.HTTPError as e:
