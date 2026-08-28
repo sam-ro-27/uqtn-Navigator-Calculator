@@ -3,25 +3,27 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 import httpx
+import os
 
 app = FastAPI()
 
-# CORS frequency injection to eliminate boundary friction
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Opens the bridge to all local ports
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Use Ollama's /api/chat endpoint for multimodal vision models
-OLLAMA_CHAT_URL = "http://127.0.0.1:11434/api/chat"
-VISION_MODEL = "llama3.2-vision"
+# Use Ollama's /api/generate endpoint for vision
+OLLAMA_GENERATE_URL = "http://127.0.0.1:11434/api/generate"
+
+# IMPORTANT: set to EXACTLY what `ollama list` shows
+VISION_MODEL = os.getenv("ZETARI_MODEL", "llama3.2-vision")
 
 class ChatRequest(BaseModel):
     prompt: str
-    image: Optional[str] = None  # Base64 data URL from live webcam feed
+    image: Optional[str] = None  # data URL from webcam
 
 class ChatResponse(BaseModel):
     response: str
@@ -42,7 +44,7 @@ def build_system_prompt() -> str:
 async def chat(req: ChatRequest):
     system_prompt = build_system_prompt()
 
-    # Extract pure base64 string from data URL
+    # Extract pure base64 string from data URL, if any
     image_b64 = None
     if req.image:
         if "," in req.image:
@@ -50,32 +52,31 @@ async def chat(req: ChatRequest):
         else:
             image_b64 = req.image
 
-    # Build structured messages for Ollama vision processing
-    user_message = {
-        "role": "user",
-        "content": req.prompt
-    }
-    if image_b64:
-        user_message["images"] = [image_b64]
+    full_prompt = f"{system_prompt}\n\nUSER: {req.prompt}\n\nASSISTANT:"
 
     payload = {
         "model": VISION_MODEL,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            user_message
-        ],
-        "stream": False
+        "prompt": full_prompt,
+        "stream": False,
     }
 
+    # Attach image at root, per Ollama vision docs
+    if image_b64:
+        payload["images"] = [image_b64]
+
     try:
-        # Utilizing async httpx to maintain optimal thermodynamic flow
         async with httpx.AsyncClient() as client:
-            resp = await client.post(OLLAMA_CHAT_URL, json=payload, timeout=90.0)
-            resp.raise_for_status()
+            resp = await client.post(OLLAMA_GENERATE_URL, json=payload, timeout=90.0)
             data = resp.json()
-            answer = data.get("message", {}).get("content", "").strip()
-            if not answer:
-                answer = "Navigator could not generate a response."
+
+            if resp.status_code != 200:
+                # Show Ollama's own error message if present
+                err_msg = data.get("error") or str(data)
+                answer = f"Ollama error {resp.status_code}: {err_msg}"
+            else:
+                answer = data.get("response", "").strip()
+                if not answer:
+                    answer = "Navigator could not generate a response."
     except Exception as exc:
         answer = f"Navigator backend error: {exc}"
 
