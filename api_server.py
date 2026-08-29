@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import httpx
 import os
+from pathlib import Path
+import json
 
 app = FastAPI(title="ZETARI.AI Backend")
 
@@ -16,6 +18,40 @@ app.add_middleware(
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 MODEL_NAME = os.getenv("ZETARI_MODEL", "llama3.2:latest")
+BASE_DIR = Path(__file__).resolve().parent
+
+PROMPT_FILES = [
+    "core_memory.txt",
+    "memory_bridge.txt",
+    "uqtn_math.txt",
+    "session_delta.txt",
+]
+
+STATE_FILES = [
+    "project.json",
+    "navigator_history.json",
+]
+
+CODE_MODULES = [
+    "offline_navigator.py",
+    "uqtn_core.py",
+    "uqtn_math.py",
+    "zeta_lattice.py",
+    "uqtn_simultaneous_engine.py",
+    "uqtn_calculator.py",
+    "memory.py",
+    "rotor_sim.py",
+    "main.py",
+]
+
+SYSTEM_PROMPT = """
+You are ZETARI.AI, a local offline navigator for UQTN work sessions and state guidance.
+Use the provided UQTN context as authoritative project meaning.
+Prefer plain English unless the user asks for technical detail.
+If a term exists in loaded context, use that meaning.
+If a runtime calculation is available, use it instead of guessing.
+If visual analysis is unavailable for a request, say so clearly.
+"""
 
 class ChatRequest(BaseModel):
     prompt: str
@@ -23,19 +59,44 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
 
-SYSTEM_PROMPT = """
-You are ZETARI.AI, a local offline navigator for UQTN work sessions.
-Always reply in clear, plain English.
-Be concise, practical, and calm.
+def read_text_file(name):
+    path = BASE_DIR / name
+    if not path.exists():
+        return ""
+    try:
+        return path.read_text(encoding="utf-8", errors="ignore").strip()
+    except:
+        return ""
 
-Rules:
-1. Do not invent meanings for acronyms or abbreviations. If unclear, ask the user what they mean.
-2. Do not guess the user's location details beyond what the user explicitly states.
-3. If uncertain, say: "I am not certain based on the current context."
-4. Stay within the user's stated context and question.
-5. Never switch languages unless the user explicitly asks you to.
-6. For greetings, respond briefly.
-"""
+def read_json_file(name):
+    path = BASE_DIR / name
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8", errors="ignore"))
+    except:
+        return {}
+
+def load_prompt_context():
+    parts = [SYSTEM_PROMPT.strip()]
+    for name in PROMPT_FILES:
+        text = read_text_file(name)
+        if text:
+            parts.append(f"[{name}]\n{text}")
+    return "\n\n".join(parts)
+
+def load_state_context():
+    state = {}
+    for name in STATE_FILES:
+        state[name] = read_json_file(name)
+    return state
+
+def build_runtime_summary():
+    available = []
+    for name in CODE_MODULES:
+        if (BASE_DIR / name).exists():
+            available.append(name)
+    return "Available local runtime modules: " + ", ".join(available)
 
 @app.get("/")
 def root():
@@ -47,7 +108,21 @@ def root():
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest):
-    prompt = f"{SYSTEM_PROMPT}\n\nUser: {req.prompt}\nAssistant:"
+    prompt_context = load_prompt_context()
+    state_context = load_state_context()
+    runtime_summary = build_runtime_summary()
+
+    prompt = f"""
+{prompt_context}
+
+{runtime_summary}
+
+Current local state:
+{json.dumps(state_context, ensure_ascii=False)[:4000]}
+
+User: {req.prompt}
+Assistant:
+""".strip()
 
     payload = {
         "model": MODEL_NAME,
@@ -56,19 +131,18 @@ async def chat(req: ChatRequest):
     }
 
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=90.0) as client:
             resp = await client.post(OLLAMA_URL, json=payload)
             data = resp.json()
 
-            if resp.status_code != 200:
-                error_text = data.get("error", str(data))
-                return ChatResponse(response=f"Ollama error {resp.status_code}: {error_text}")
+        if resp.status_code != 200:
+            return ChatResponse(response=f"Ollama error {resp.status_code}: {data}")
 
-            answer = (data.get("response") or "").strip()
-            if not answer:
-                answer = "I did not receive a usable response from the model."
+        answer = (data.get("response") or "").strip()
+        if not answer:
+            answer = "I did not receive a usable response from the model."
 
-            return ChatResponse(response=answer)
+        return ChatResponse(response=answer)
 
     except Exception as exc:
         return ChatResponse(response=f"Backend error: {exc}")
