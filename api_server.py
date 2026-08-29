@@ -1,11 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
 import httpx
 import os
 
-app = FastAPI()
+app = FastAPI(title="ZETARI.AI Backend")
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,76 +14,59 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Use Ollama's /api/generate endpoint for vision
-OLLAMA_GENERATE_URL = "http://127.0.0.1:11434/api/generate"
-
-# IMPORTANT: set to EXACTLY what `ollama list` shows
-VISION_MODEL = os.getenv("ZETARI_MODEL", "llama3.2-vision")
+OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
+MODEL_NAME = os.getenv("ZETARI_MODEL", "llama3.2:latest")
 
 class ChatRequest(BaseModel):
     prompt: str
-    image: Optional[str] = None  # data URL from webcam
 
 class ChatResponse(BaseModel):
     response: str
 
-def build_system_prompt() -> str:
-    return (
-        "You are ZETARI.AI, a local Temporal Navigator for UQTN work sessions. "
-        "IMPORTANT: Always respond in clear, plain English only. "
-        "Never answer in another language unless the user explicitly asks you to translate. "
-        "You receive the user's text prompt and sometimes a live webcam frame. "
-        "When an image is present, analyze only visible facts in the frame, such as "
-        "objects, lighting, posture, facial expression, and the environment. "
-        "Do not claim you see a camera frame if no image was received. "
-        "Give concise, helpful guidance based on the user's actual question."
-    )
-
-@app.post("/api/chat", response_model=ChatResponse)
-async def chat(req: ChatRequest):
-    system_prompt = build_system_prompt()
-
-    # Extract pure base64 string from data URL, if any
-    image_b64 = None
-    if req.image:
-        if "," in req.image:
-            image_b64 = req.image.split(",", 1)[1]
-        else:
-            image_b64 = req.image
-
-    full_prompt = f"{system_prompt}\n\nUSER: {req.prompt}\n\nASSISTANT:"
-
-    payload = {
-        "model": VISION_MODEL,
-        "prompt": full_prompt,
-        "stream": False,
-    }
-
-    # Attach image at root, per Ollama vision docs
-    if image_b64:
-        payload["images"] = [image_b64]
-
-    try:
-        async with httpx.AsyncClient() as client:
-            resp = await client.post(OLLAMA_GENERATE_URL, json=payload, timeout=90.0)
-            data = resp.json()
-
-            if resp.status_code != 200:
-                # Show Ollama's own error message if present
-                err_msg = data.get("error") or str(data)
-                answer = f"Ollama error {resp.status_code}: {err_msg}"
-            else:
-                answer = data.get("response", "").strip()
-                if not answer:
-                    answer = "Navigator could not generate a response."
-    except Exception as exc:
-        answer = f"Navigator backend error: {exc}"
-
-    return ChatResponse(response=answer)
+SYSTEM_PROMPT = """
+You are ZETARI.AI, a local offline navigator for UQTN work sessions.
+Always reply in clear, plain English.
+Be concise, practical, and calm.
+If the user greets you, greet them briefly.
+If the user asks for help, give direct helpful guidance.
+Never switch languages unless the user explicitly asks you to.
+""".strip()
 
 @app.get("/")
 def root():
-    return {"status": "ZETARI.AI backend is running"}
+    return {
+        "status": "ok",
+        "service": "ZETARI.AI backend",
+        "model": MODEL_NAME
+    }
+
+@app.post("/api/chat", response_model=ChatResponse)
+async def chat(req: ChatRequest):
+    prompt = f"{SYSTEM_PROMPT}\n\nUser: {req.prompt}\nAssistant:"
+
+    payload = {
+        "model": MODEL_NAME,
+        "prompt": prompt,
+        "stream": False
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            resp = await client.post(OLLAMA_URL, json=payload)
+            data = resp.json()
+
+            if resp.status_code != 200:
+                error_text = data.get("error", str(data))
+                return ChatResponse(response=f"Ollama error {resp.status_code}: {error_text}")
+
+            answer = (data.get("response") or "").strip()
+            if not answer:
+                answer = "I did not receive a usable response from the model."
+
+            return ChatResponse(response=answer)
+
+    except Exception as exc:
+        return ChatResponse(response=f"Backend error: {exc}")
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#223247">
-  <meta name="description" content="Zetari.AI local UQTN Navigator">
-  <link rel="manifest" href="./manifest.json">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#223247" />
+  <meta name="description" content="Zetari.AI local UQTN Navigator" />
   <title>Zetari.AI — UQTN Navigator</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -89,7 +85,6 @@
       font-weight: 700;
     }
 
-    /* Webcam box */
     .webcam-container {
       margin-bottom: 14px;
       border-radius: 8px;
@@ -255,32 +250,12 @@
       border-color: #88c0d0;
     }
 
-    .state-above {
-      color: #a3be8c;
-    }
-
-    .state-below {
-      color: #bf616a;
-    }
-
-    .state-none {
-      color: #d08770;
-    }
-
-    .highlight {
-      animation: pulse .7s ease;
-    }
-
-    @keyframes pulse {
-      0% { background: #ebcb8b; color: #111c2d; }
-      100% { background: #2e3440; color: #e5e9f0; }
-    }
+    .state-above { color: #a3be8c; }
+    .state-below { color: #bf616a; }
+    .state-none { color: #d08770; }
 
     @media (max-width: 860px) {
-      .main {
-        grid-template-columns: 1fr;
-      }
-
+      .main { grid-template-columns: 1fr; }
       .sidebar {
         border-right: 0;
         border-bottom: 1px solid #31445c;
@@ -288,133 +263,58 @@
     }
 
     @media (max-width: 650px) {
-      body {
-        padding: 8px;
-      }
-
-      .app {
-        height: 97vh;
-      }
-
-      .input-row {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .input-row input[type="text"] {
-        grid-column: span 2;
-      }
-
-      .message {
-        max-width: 94%;
-      }
+      body { padding: 8px; }
+      .app { height: 97vh; }
+      .input-row { grid-template-columns: 1fr 1fr; }
+      .input-row input[type="text"] { grid-column: span 2; }
+      .message { max-width: 94%; }
     }
   </style>
 </head>
-
 <body>
   <div class="app">
     <header>
       <h1>ZETARI.AI</h1>
-      <p>
-        Local temporal navigator for UQTN work sessions and state guidance.
-      </p>
+      <p>Local temporal navigator for UQTN work sessions and state guidance.</p>
     </header>
 
     <main class="main">
       <aside class="sidebar">
         <h2 class="section-title">Navigator state</h2>
+        <div class="mode-status">Autonomous offline calculation active</div>
 
-        <div class="mode-status">
-          Autonomous offline calculation active
-        </div>
-
-        <!-- Live Optical Sensor / Webcam Window -->
         <div class="webcam-container">
           <video id="liveWebcam" autoplay playsinline muted></video>
           <div class="webcam-label">OPTICAL SENSOR LIVE</div>
         </div>
 
         <div class="state-grid">
-          <div class="state-card">
-            <small>Environmental</small>
-            <strong id="envValue">0.200</strong>
-          </div>
-
-          <div class="state-card">
-            <small>Emotional</small>
-            <strong id="emoValue">0.200</strong>
-          </div>
-
-          <div class="state-card">
-            <small>Mental</small>
-            <strong id="mentValue">0.200</strong>
-          </div>
-
-          <div class="state-card">
-            <small>Physical</small>
-            <strong id="physValue">0.200</strong>
-          </div>
-
-          <div class="state-card">
-            <small>Resistance</small>
-            <strong id="resValue">0.200</strong>
-          </div>
-
-          <div class="state-card">
-            <small>Virtual state vector</small>
-            <strong id="vectorValue">
-              (0.200, 0.200, 0.200, 0.200)
-            </strong>
-          </div>
-
-          <div class="state-card">
-            <small>Task type</small>
-            <strong id="taskValue">general</strong>
-          </div>
-
-          <div class="state-card">
-            <small>Session</small>
-            <strong id="sessionValue">inactive</strong>
-          </div>
+          <div class="state-card"><small>Environmental</small><strong id="envValue">0.200</strong></div>
+          <div class="state-card"><small>Emotional</small><strong id="emoValue">0.200</strong></div>
+          <div class="state-card"><small>Mental</small><strong id="mentValue">0.200</strong></div>
+          <div class="state-card"><small>Physical</small><strong id="physValue">0.200</strong></div>
+          <div class="state-card"><small>Resistance</small><strong id="resValue">0.200</strong></div>
+          <div class="state-card"><small>Virtual state vector</small><strong id="vectorValue">(0.200, 0.200, 0.200, 0.200)</strong></div>
+          <div class="state-card"><small>Task type</small><strong id="taskValue">general</strong></div>
+          <div class="state-card"><small>Session</small><strong id="sessionValue">inactive</strong></div>
         </div>
 
         <div class="sidebar-buttons">
-          <button type="button" data-command="status report">
-            Status report
-          </button>
-
-          <button type="button" class="ghost-button" data-command="start session">
-            Start session
-          </button>
-
-          <button type="button" class="ghost-button" data-command="summary">
-            Summary
-          </button>
-
-          <button type="button" class="ghost-button" data-command="end session">
-            End session
-          </button>
-
-          <button type="button" class="ghost-button" data-command="save state">
-            Save state
-          </button>
-
-          <button type="button" class="ghost-button" data-command="load state">
-            Load state
-          </button>
-
-          <button type="button" class="ghost-button" data-command="reset state">
-            Reset state
-          </button>
+          <button type="button" data-command="status report">Status report</button>
+          <button type="button" class="ghost-button" data-command="start session">Start session</button>
+          <button type="button" class="ghost-button" data-command="summary">Summary</button>
+          <button type="button" class="ghost-button" data-command="end session">End session</button>
+          <button type="button" class="ghost-button" data-command="save state">Save state</button>
+          <button type="button" class="ghost-button" data-command="load state">Load state</button>
+          <button type="button" class="ghost-button" data-command="reset state">Reset state</button>
         </div>
 
         <div id="statusBox" class="status-box"></div>
         <div id="timelineBox" class="timeline-box"></div>
 
         <div class="status-note">
-          Zetari.AI interprets text or voice locally, updates the four-dimensional
-          virtual state, calculates parallel MER branches, records history,
-          and provides navigation guidance connected to Ollama and UQTN.
+          Zetari.AI interprets text locally, updates the four-dimensional virtual state,
+          records history, and provides guidance connected to Ollama and UQTN.
         </div>
       </aside>
 
@@ -423,38 +323,14 @@
 
         <div class="composer">
           <div class="input-row">
-            <input
-              id="userInput"
-              type="text"
-              placeholder="Ask Navigator a question or describe how you feel..."
-            >
-
-            <!-- VOICE SELECTOR BUTTON -->
-            <button
-              id="voiceToggle"
-              type="button"
-              class="ghost-button"
-              title="Click to toggle voice profile"
-            >
-              🎙️ Voice: Natural Human
-            </button>
-
-            <button
-              id="micButton"
-              type="button"
-              class="ghost-button"
-            >
-              🎤 Speak
-            </button>
-
-            <button id="sendButton" type="button">
-              Send
-            </button>
+            <input id="userInput" type="text" placeholder="Ask Navigator a question or describe how you feel..." />
+            <button id="voiceToggle" type="button" class="ghost-button">🎙️ Voice: Natural Human</button>
+            <button id="micButton" type="button" class="ghost-button">🎤 Speak</button>
+            <button id="sendButton" type="button">Send</button>
           </div>
 
           <div class="note">
-            Try: “What is the chronon period in seconds?”, “plan block 30 minutes”,
-            “summary”, or “I feel focused and ready to code”.
+            Try: “What is the chronon period in seconds?”, “plan block 30 minutes”, “summary”, or “I feel focused and ready to code”.
           </div>
         </div>
       </section>
@@ -467,11 +343,12 @@
     const STORAGE_KEY = "zetari_state_v1";
     const HISTORY_KEY = "zetari_state_history_v1";
     const PHI = 1.618033988749895;
+    const API_URL = "http://127.0.0.1:8000/api/chat";
 
     let recognition = null;
     let listening = false;
     let state = loadState();
-    let voiceMode = "natural"; // "natural" or "synth"
+    let voiceMode = "natural";
     let availableVoices = [];
 
     function $(id) {
@@ -482,41 +359,18 @@
       return Date.now();
     }
 
-    // Auto-initialize Live Optical Feed on load
     async function initWebcam() {
       const videoEl = $("liveWebcam");
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.warn("MediaDevices API unavailable.");
-        return;
-      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
           audio: false
         });
         videoEl.srcObject = stream;
-        console.log("Webcam stream started.");
       } catch (err) {
-        console.warn("Optical feed auto-start notice:", err.message);
+        console.warn("Webcam unavailable:", err.message);
       }
-    }
-
-    // Capture one frame from the live webcam and return a data URL
-    function captureWebcamFrame() {
-      const video = $("liveWebcam");
-      if (!video || !video.srcObject || video.videoWidth === 0 || video.videoHeight === 0) {
-        return null;
-      }
-
-      const canvas = document.createElement("canvas");
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      // JPEG data URL: "data:image/jpeg;base64,..."
-      return canvas.toDataURL("image/jpeg", 0.85);
     }
 
     function defaultState() {
@@ -533,24 +387,16 @@
 
     function clamp(value, minimum = 0, maximum = 1) {
       const number = Number(value);
-      if (!Number.isFinite(number)) {
-        return minimum;
-      }
+      if (!Number.isFinite(number)) return minimum;
       return Math.min(maximum, Math.max(minimum, number));
     }
 
     function loadState() {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
-        if (!saved) {
-          return defaultState();
-        }
-        return {
-          ...defaultState(),
-          ...JSON.parse(saved)
-        };
-      } catch (error) {
-        console.warn("State could not be loaded.", error);
+        if (!saved) return defaultState();
+        return { ...defaultState(), ...JSON.parse(saved) };
+      } catch {
         return defaultState();
       }
     }
@@ -570,9 +416,7 @@
 
     function getHistory() {
       try {
-        return JSON.parse(
-          localStorage.getItem(HISTORY_KEY) || "[]"
-        );
+        return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
       } catch {
         return [];
       }
@@ -597,25 +441,17 @@
         taskType: state.taskType
       });
 
-      localStorage.setItem(
-        HISTORY_KEY,
-        JSON.stringify(history.slice(-500))
-      );
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(-500)));
     }
 
     function calculateState() {
-      const agency =
-        state.env +
-        state.emo +
-        state.mental +
-        state.phys;
-
+      const agency = state.env + state.emo + state.mental + state.phys;
       const merBase = agency / Math.max(state.res, 0.0001);
       const merPhiMultiply = merBase * PHI;
       const merPhiDivide = merBase / PHI;
 
-      let label;
-      let cssClass;
+      let label = "Navigator inactive";
+      let cssClass = "state-none";
 
       if (merBase >= 1) {
         label = "Hyper-Resonant";
@@ -623,31 +459,15 @@
       } else if (merBase > 0) {
         label = "Entropic";
         cssClass = "state-below";
-      } else {
-        label = "Navigator inactive";
-        cssClass = "state-none";
       }
 
-      return {
-        agency,
-        merBase,
-        merPhiMultiply,
-        merPhiDivide,
-        label,
-        cssClass
-      };
+      return { agency, merBase, merPhiMultiply, merPhiDivide, label, cssClass };
     }
 
     function getAdvice(calculated) {
-      if (calculated.merBase < 0.7) {
-        return "Take a 10–15 minute break and reduce cognitive load.";
-      }
-      if (calculated.merBase < 1.0) {
-        return "Use light work or planning tasks.";
-      }
-      if (calculated.merBase <= 1.3) {
-        return "Use focused deep work.";
-      }
+      if (calculated.merBase < 0.7) return "Take a 10 to 15 minute break and reduce cognitive load.";
+      if (calculated.merBase < 1.0) return "Use light work or planning tasks.";
+      if (calculated.merBase <= 1.3) return "Use focused deep work.";
       return "Use high-intensity deep work, monitor resistance, and plan a micro-break soon.";
     }
 
@@ -661,21 +481,15 @@
       $("resValue").textContent = state.res.toFixed(3);
 
       $("vectorValue").textContent =
-        `(${state.env.toFixed(3)}, ` +
-        `${state.emo.toFixed(3)}, ` +
-        `${state.mental.toFixed(3)}, ` +
-        `${state.phys.toFixed(3)})`;
+        `(${state.env.toFixed(3)}, ${state.emo.toFixed(3)}, ${state.mental.toFixed(3)}, ${state.phys.toFixed(3)})`;
 
       $("taskValue").textContent = state.taskType;
 
       if (state.session) {
-        const seconds = Math.floor(
-          (now() - state.session.start) / 1000
-        );
+        const seconds = Math.floor((now() - state.session.start) / 1000);
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
-        $("sessionValue").textContent =
-          `${minutes}m ${remainingSeconds}s`;
+        $("sessionValue").textContent = `${minutes}m ${remainingSeconds}s`;
       } else {
         $("sessionValue").textContent = "inactive";
       }
@@ -684,30 +498,22 @@
         Agency: <strong>${calculated.agency.toFixed(4)}</strong><br>
         Resistance: <strong>${state.res.toFixed(4)}</strong><br>
         MER base: <strong>${calculated.merBase.toFixed(4)}</strong><br>
-        MER × φ: <strong>${calculated.merPhiMultiply.toFixed(4)}</strong><br>
-        MER ÷ φ: <strong>${calculated.merPhiDivide.toFixed(4)}</strong><br>
-        State:
-        <strong class="${calculated.cssClass}">
-          ${calculated.label}
-        </strong><br><br>
-        Navigator recommendation:<br>
-        ${getAdvice(calculated)}
+        MER × phi: <strong>${calculated.merPhiMultiply.toFixed(4)}</strong><br>
+        MER ÷ phi: <strong>${calculated.merPhiDivide.toFixed(4)}</strong><br>
+        State: <strong class="${calculated.cssClass}">${calculated.label}</strong><br><br>
+        Navigator recommendation:<br>${getAdvice(calculated)}
       `;
 
       const history = getHistory().slice(-8).reverse();
 
       $("timelineBox").innerHTML = `
         <strong>Recent timeline</strong><br>
-        ${
-          history.length
-            ? history.map(item => {
-                const time = new Date(
-                  item.timestamp
-                ).toLocaleTimeString();
-                return `${time} — MER ${item.merBase.toFixed(2)} — ${item.label}`;
-              }).join("<br>")
-            : "No state history yet."
-        }
+        ${history.length
+          ? history.map(item => {
+              const time = new Date(item.timestamp).toLocaleTimeString();
+              return `${time} — MER ${item.merBase.toFixed(2)} — ${item.label}`;
+            }).join("<br>")
+          : "No state history yet."}
       `;
     }
 
@@ -721,52 +527,76 @@
     }
 
     function populateVoices() {
-      if ("speechSynthesis" in window) {
-        availableVoices = window.speechSynthesis.getVoices();
-      }
+      if (!("speechSynthesis" in window)) return;
+      availableVoices = window.speechSynthesis.getVoices();
     }
 
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.onvoiceschanged = populateVoices;
-      populateVoices();
+    function normalizeLang(lang) {
+      return (lang || "").toLowerCase().replace("_", "-");
+    }
+
+    function getPreferredEnglishVoice() {
+      const englishVoices = availableVoices.filter(v => normalizeLang(v.lang).startsWith("en"));
+      if (!englishVoices.length) return null;
+
+      const preferredNames = [
+        "Microsoft Guy",
+        "Microsoft David",
+        "Microsoft Christopher",
+        "Microsoft Jenny",
+        "Google US English",
+        "Google UK English Male",
+        "Google UK English Female",
+        "David"
+      ];
+
+      for (const name of preferredNames) {
+        const match = englishVoices.find(v => v.name.includes(name));
+        if (match) return match;
+      }
+
+      return englishVoices[0];
+    }
+
+    function cleanSpeechText(text) {
+      return String(text)
+        .replace(/Zetari\.AI/gi, "Zetari A I")
+        .replace(/MER/gi, "M E R")
+        .replace(/φ/g, "phi")
+        .replace(/÷/g, " divided by ")
+        .replace(/×/g, " times ")
+        .replace(/0\.(\d+)/g, "0 point $1")
+        .replace(/\s+/g, " ")
+        .trim();
     }
 
     function speak(text) {
-      if (!("speechSynthesis" in window)) {
+      if (!("speechSynthesis" in window)) return;
+
+      window.speechSynthesis.cancel();
+      populateVoices();
+
+      const chosenVoice = getPreferredEnglishVoice();
+      if (!chosenVoice) {
+        console.warn("No English voice available.");
         return;
       }
 
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-
-      if (voiceMode === "natural") {
-        const naturalVoice = availableVoices.find(v =>
-          v.name.includes("Natural") ||
-          v.name.includes("Online") ||
-          v.name.includes("Christopher") ||
-          v.name.includes("Guy") ||
-          v.name.includes("Eric") ||
-          v.name.includes("Jenny")
-        );
-
-        if (naturalVoice) {
-          utterance.voice = naturalVoice;
-          utterance.pitch = 0.95;
-          utterance.rate = 1.0;
-        } else {
-          const maleVoice = availableVoices.find(v => v.name.includes("David") || v.lang.startsWith("en"));
-          if (maleVoice) utterance.voice = maleVoice;
-          utterance.pitch = 0.75;
-          utterance.rate = 0.88;
-        }
-      } else {
-        const synthVoice = availableVoices.find(v => v.name.includes("Desktop") || v.name.includes("David"));
-        if (synthVoice) utterance.voice = synthVoice;
-        utterance.pitch = 1.1;
-        utterance.rate = 1.0;
-      }
+      const utterance = new SpeechSynthesisUtterance(cleanSpeechText(text));
+      utterance.voice = chosenVoice;
+      utterance.lang = chosenVoice.lang || "en-US";
+      utterance.volume = 1.0;
+      utterance.pitch = voiceMode === "natural" ? 1.0 : 1.05;
+      utterance.rate = voiceMode === "natural" ? 0.92 : 0.98;
 
       window.speechSynthesis.speak(utterance);
+    }
+
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.onvoiceschanged = function () {
+        populateVoices();
+      };
+      populateVoices();
     }
 
     function containsAny(text, words) {
@@ -792,12 +622,8 @@
 
       for (const category of ["env", "emo", "ment", "phys"]) {
         const stateKey = category === "ment" ? "mental" : category;
-        if (containsAny(text, positive[category])) {
-          state[stateKey] += 0.08;
-        }
-        if (containsAny(text, negative[category])) {
-          state[stateKey] -= 0.08;
-        }
+        if (containsAny(text, positive[category])) state[stateKey] += 0.08;
+        if (containsAny(text, negative[category])) state[stateKey] -= 0.08;
       }
 
       if (containsAny(text, ["break", "rest", "pause", "relax"])) {
@@ -828,15 +654,11 @@
       const text = rawText.toLowerCase().trim();
 
       const plan = text.match(/plan block\s+(\d+)\s*minutes?/);
-      if (plan) {
-        return sessionStart(Number(plan[1]));
-      }
+      if (plan) return sessionStart(Number(plan[1]));
 
-      if (text.includes("start session")) {
-        return sessionStart();
-      }
+      if (text === "start session") return sessionStart();
 
-      if (text.includes("end session")) {
+      if (text === "end session") {
         const summary = sessionSummary();
         state.session = null;
         saveState();
@@ -844,35 +666,22 @@
         return `${summary}\n\nSession ended.`;
       }
 
-      if (text.includes("summary")) {
-        return sessionSummary();
-      }
+      if (text === "summary") return sessionSummary();
+      if (text === "save state") return saveState();
 
-      if (text.includes("save")) {
-        return saveState();
-      }
-
-      if (text.includes("load")) {
+      if (text === "load state") {
         state = loadState();
         render();
         return "Saved Zetari.AI state loaded.";
       }
 
-      if (text.includes("reset")) {
-        return resetState();
+      if (text === "reset state") return resetState();
+
+      if (text === "help") {
+        return "Available commands: status report, start session, plan block 30 minutes, summary, end session, save state, load state, reset state.";
       }
 
-      if (text.includes("help")) {
-        return `Available commands:\n\nstatus report\nstart session\nplan block 30 minutes\nsummary\nend session\nsave state\nload state\nreset state\n\nYou can also describe how you feel or ask Navigator a question.`;
-      }
-
-      if (
-        text.includes("status report") ||
-        text.includes("operational") ||
-        text.includes("working") ||
-        text === "hi" ||
-        text === "hello"
-      ) {
+      if (text === "status report" || text === "hi" || text === "hello") {
         render();
         return `Zetari.AI is operational locally.\n\n${sessionSummary()}`;
       }
@@ -891,22 +700,33 @@
       render();
 
       if (minutes) {
-        const end = new Date(now() + minutes * 60 * 1000).toLocaleTimeString();
+        const end = new Date(now() + minutes * 60000).toLocaleTimeString();
         return `Work block started.\n\nTask: ${state.taskType}\nPlanned duration: ${minutes} minutes\nExpected end time: ${end}\n\nInitial recommendation:\n${getAdvice(calculateState())}`;
       }
+
       return `Session started at ${new Date().toLocaleTimeString()}.`;
     }
 
     function sessionSummary() {
       const calculated = calculateState();
       const history = getHistory();
-      const startTime = state.session ? state.session.start : now() - 30 * 60 * 1000;
+      const startTime = state.session ? state.session.start : now() - 30 * 60000;
       const sessionHistory = history.filter(item => item.timestamp >= startTime);
+
       const average = sessionHistory.length
         ? sessionHistory.reduce((total, item) => total + item.merBase, 0) / sessionHistory.length
         : calculated.merBase;
 
-      return `Zetari.AI session summary\n\nTask type: ${state.taskType}\nSamples: ${sessionHistory.length}\nAverage MER: ${average.toFixed(4)}\nCurrent MER: ${calculated.merBase.toFixed(4)}\nCurrent state: ${calculated.label}\n\nRecommendation:\n${getAdvice(calculated)}`;
+      return `Zetari.AI session summary
+
+Task type: ${state.taskType}
+Samples: ${sessionHistory.length}
+Average MER: ${average.toFixed(4)}
+Current MER: ${calculated.merBase.toFixed(4)}
+Current state: ${calculated.label}
+
+Recommendation:
+${getAdvice(calculated)}`;
     }
 
     async function processUserPrompt(text) {
@@ -915,20 +735,23 @@
       addMessage(text, "user");
 
       const lower = text.toLowerCase().trim();
-      const isCommand = lower.startsWith("plan block") || 
-                        lower === "start session" || 
-                        lower === "end session" || 
-                        lower === "summary" || 
-                        lower === "save state" || 
-                        lower === "load state" || 
-                        lower === "reset state" || 
-                        lower === "status report" || 
-                        lower === "help";
+      const isCommand =
+        lower.startsWith("plan block") ||
+        lower === "start session" ||
+        lower === "end session" ||
+        lower === "summary" ||
+        lower === "save state" ||
+        lower === "load state" ||
+        lower === "reset state" ||
+        lower === "status report" ||
+        lower === "help" ||
+        lower === "hi" ||
+        lower === "hello";
 
       if (isCommand) {
         const response = runCommand(text);
         addMessage(response, "bot");
-        speak(response);
+        speak(response.split("\n")[0]);
         return;
       }
 
@@ -936,21 +759,18 @@
       const loading = addMessage("Navigator computing...", "bot");
 
       try {
-        const webcamFrame = captureWebcamFrame();
-
-        const res = await fetch("http://localhost:8000/api/chat", {
+        const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt: text,
-            image: webcamFrame
-          })
+          body: JSON.stringify({ prompt: text })
         });
+
         const data = await res.json();
-        loading.textContent = data.response || "No response received.";
-        speak(loading.textContent);
+        const responseText = data.response || "No response received.";
+        loading.textContent = responseText;
+        speak(responseText.split("\n")[0].slice(0, 180));
       } catch (err) {
-        const fallback = runCommand(text);
+        const fallback = "Backend unavailable. Local navigator remains active.";
         loading.textContent = fallback;
         speak(fallback);
       }
@@ -965,35 +785,30 @@
     }
 
     function initializeVoice() {
-      const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
-
-      if (!SpeechRecognition) {
-        return null;
-      }
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return null;
 
       const recognizer = new SpeechRecognition();
       recognizer.continuous = false;
       recognizer.interimResults = false;
       recognizer.lang = "en-US";
 
-      recognizer.onstart = function() {
+      recognizer.onstart = function () {
         listening = true;
         $("micButton").classList.add("listening");
         $("micButton").textContent = "🎙️ Listening...";
       };
 
-      recognizer.onresult = function(event) {
+      recognizer.onresult = function (event) {
         const transcript = event.results[0][0].transcript;
         processUserPrompt(transcript);
       };
 
-      recognizer.onerror = function() {
+      recognizer.onerror = function () {
         addMessage("Voice input failed. Please type instead.", "bot");
       };
 
-      recognizer.onend = function() {
+      recognizer.onend = function () {
         listening = false;
         $("micButton").classList.remove("listening");
         $("micButton").textContent = "🎤 Speak";
@@ -1002,61 +817,41 @@
       return recognizer;
     }
 
-    function toggleVoice() {
-      if (!recognition) {
-        recognition = initializeVoice();
-      }
+    function toggleVoiceInput() {
+      if (!recognition) recognition = initializeVoice();
 
       if (!recognition) {
-        addMessage(
-          "Voice recognition is not supported in this browser.",
-          "bot"
-        );
+        addMessage("Voice recognition is not supported in this browser.", "bot");
         return;
       }
 
-      if (listening) {
-        recognition.stop();
-      } else {
-        recognition.start();
-      }
+      if (listening) recognition.stop();
+      else recognition.start();
     }
 
     $("sendButton").addEventListener("click", sendMessage);
-    $("micButton").addEventListener("click", toggleVoice);
+    $("micButton").addEventListener("click", toggleVoiceInput);
 
-    $("voiceToggle").addEventListener("click", function() {
+    $("voiceToggle").addEventListener("click", function () {
       voiceMode = voiceMode === "natural" ? "synth" : "natural";
       this.textContent = voiceMode === "natural" ? "🎙️ Voice: Natural Human" : "🤖 Voice: Synth Robot";
-      speak(`Voice profile switched to ${voiceMode === "natural" ? "Natural Human Narrator" : "Synthesizer Mode"}.`);
+      speak(voiceMode === "natural" ? "Natural human voice enabled." : "Synth robot voice enabled.");
     });
 
-    $("userInput").addEventListener(
-      "keydown",
-      function(event) {
-        if (event.key === "Enter") {
-          sendMessage();
-        }
-      }
-    );
+    $("userInput").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") sendMessage();
+    });
 
-    document
-      .querySelectorAll("[data-command]")
-      .forEach(button => {
-        button.addEventListener("click", function() {
-          const command = button.dataset.command;
-          processUserPrompt(command);
-        });
+    document.querySelectorAll("[data-command]").forEach(button => {
+      button.addEventListener("click", function () {
+        processUserPrompt(button.dataset.command);
       });
+    });
 
     state = loadState();
     render();
     initWebcam();
-
-    addMessage(
-      "Navigator ready. Describe how you feel or ask an operational question to begin.",
-      "bot"
-    );
+    addMessage("Navigator ready. Describe how you feel or ask an operational question to begin.", "bot");
   </script>
 </body>
 </html>
