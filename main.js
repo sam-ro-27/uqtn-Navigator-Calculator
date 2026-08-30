@@ -213,9 +213,9 @@ Recommendation: ${advice(d)}`;
   }
 
   async function send() {
-    const i = $("input");
-    const t = i.value.trim();
-    if (!t) return;
+  alert("send() fired");
+  const i = $("input");
+  const t = i.value.trim();
 
     add(t, "user");
     i.value = "";
