@@ -212,11 +212,11 @@ Recommendation: ${advice(d)}`;
     return `Message interpreted for ${state.task_type}.\n${summary()}`;
   }
 
-  async function send() {
+ async function send() {
   alert("send() fired");
   const i = $("input");
   const t = i.value.trim();
-
+  if (!t) return;
     add(t, "user");
     i.value = "";
 
@@ -319,7 +319,7 @@ Recommendation: ${advice(d)}`;
   add("Navigator ready. Describe how you feel or what you are working on to start a session.", "bot");
   loadProjectRegistry();
 
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js").catch(console.warn);
-  }
+  // if ("serviceWorker" in navigator) {
+//   navigator.serviceWorker.register("sw.js").catch(console.warn);
+// }
 })();
