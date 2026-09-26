@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#223247" />
-  <meta name="description" content="Zetari.AI local UQTN Navigator" />
-  <title>Zetari.AI — UQTN Navigator</title>
+  <meta name="description" content="Krimoxous.AI local UQTN Navigator" />
+  <title>Krimoxous.AI — UQTN Navigator</title>
 
   <style>
     * { box-sizing: border-box; }
@@ -274,7 +274,7 @@
 <body>
   <div class="app">
     <header>
-      <h1>ZETARI.AI</h1>
+      <h1>Krimoxous.AI</h1>
       <p>Local temporal navigator for UQTN work sessions and state guidance.</p>
     </header>
 
@@ -282,7 +282,6 @@
       <aside class="sidebar">
         <h2 class="section-title">Navigator state</h2>
         <div class="mode-status">Autonomous offline calculation active</div>
-
         <div class="webcam-container">
           <video id="liveWebcam" autoplay playsinline muted></video>
           <div class="webcam-label">OPTICAL SENSOR LIVE</div>
@@ -313,7 +312,7 @@
         <div id="timelineBox" class="timeline-box"></div>
 
         <div class="status-note">
-          Zetari.AI interprets text locally, updates the four-dimensional virtual state,
+          Krimoxous.AI interprets text locally, updates the four-dimensional virtual state,
           records history, and provides guidance connected to Ollama and UQTN.
         </div>
       </aside>
@@ -340,8 +339,8 @@
   <script>
     "use strict";
 
-    const STORAGE_KEY = "zetari_state_v1";
-    const HISTORY_KEY = "zetari_state_history_v1";
+    const STORAGE_KEY = "krimoxous_state_v1";
+    const HISTORY_KEY = "krimoxous_state_history_v1";
     const PHI = 1.618033988749895;
     const API_URL = "http://127.0.0.1:8000/api/chat";
 
@@ -403,7 +402,7 @@
 
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      return "Zetari.AI state saved locally.";
+      return "Krimoxous.AI state saved locally.";
     }
 
     function resetState() {
@@ -411,7 +410,7 @@
       localStorage.removeItem(HISTORY_KEY);
       saveState();
       render();
-      return "Zetari.AI state and history reset.";
+      return "Krimoxous.AI state and history reset.";
     }
 
     function getHistory() {
@@ -560,7 +559,7 @@
 
     function cleanSpeechText(text) {
       return String(text)
-        .replace(/Zetari\.AI/gi, "Zetari A I")
+        .replace(/Krimoxous\.AI/gi, "Krimoxous A I")
         .replace(/MER/gi, "M E R")
         .replace(/φ/g, "phi")
         .replace(/÷/g, " divided by ")
@@ -672,7 +671,7 @@
       if (text === "load state") {
         state = loadState();
         render();
-        return "Saved Zetari.AI state loaded.";
+        return "Saved Krimoxous.AI state loaded.";
       }
 
       if (text === "reset state") return resetState();
@@ -683,7 +682,7 @@
 
       if (text === "status report" || text === "hi" || text === "hello") {
         render();
-        return `Zetari.AI is operational locally.\n\n${sessionSummary()}`;
+        return `Krimoxous.AI is operational locally.\n\n${sessionSummary()}`;
       }
 
       interpretMessage(rawText);
@@ -717,7 +716,7 @@
         ? sessionHistory.reduce((total, item) => total + item.merBase, 0) / sessionHistory.length
         : calculated.merBase;
 
-      return `Zetari.AI session summary
+      return `Krimoxous.AI session summary
 
 Task type: ${state.taskType}
 Samples: ${sessionHistory.length}

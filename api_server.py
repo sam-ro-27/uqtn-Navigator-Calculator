@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 import json
 
-app = FastAPI(title="ZETARI.AI Backend")
+app = FastAPI(title="Krimoxous.AI Backend")
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,7 +17,7 @@ app.add_middleware(
 )
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
-MODEL_NAME = os.getenv("ZETARI_MODEL", "llama3.2:latest")
+MODEL_NAME = os.getenv("KRIMOXOUS_MODEL", "llama3.2:latest")
 BASE_DIR = Path(__file__).resolve().parent
 
 PROMPT_FILES = [
@@ -45,7 +45,7 @@ CODE_MODULES = [
 ]
 
 SYSTEM_PROMPT = """
-You are ZETARI.AI, a local offline navigator for UQTN work sessions and state guidance.
+You are Krimoxous.AI, a local offline navigator for UQTN work sessions and state guidance.
 Use the provided UQTN context as authoritative project meaning.
 Prefer plain English unless the user asks for technical detail.
 If a term exists in loaded context, use that meaning.
@@ -102,7 +102,7 @@ def build_runtime_summary():
 def root():
     return {
         "status": "ok",
-        "service": "ZETARI.AI backend",
+        "service": "Krimoxous.AI backend",
         "model": MODEL_NAME
     }
 

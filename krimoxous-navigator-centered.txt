@@ -1,4 +1,4 @@
-AION / UQTN — Navigator-Centered Definition
+Krimoxous / UQTN — Navigator-Centered Definition
 
 Core Insight:
 The Navigator (you, or any agent inside the system) *is* the MER equation in motion.
