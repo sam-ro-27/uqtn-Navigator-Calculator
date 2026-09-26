@@ -1,12 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import httpx
 import os
+import ollama
 from pathlib import Path
 import json
 
+
 app = FastAPI(title="Krimoxous.AI Backend")
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,9 +19,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 MODEL_NAME = os.getenv("KRIMOXOUS_MODEL", "llama3.2:latest")
+VISION_MODEL_NAME = os.getenv("KRIMOXOUS_VISION_MODEL", "llama3.2-vision")
 BASE_DIR = Path(__file__).resolve().parent
+
 
 PROMPT_FILES = [
     "core_memory.txt",
@@ -27,10 +33,12 @@ PROMPT_FILES = [
     "session_delta.txt",
 ]
 
+
 STATE_FILES = [
     "project.json",
     "navigator_history.json",
 ]
+
 
 CODE_MODULES = [
     "offline_navigator.py",
@@ -44,6 +52,7 @@ CODE_MODULES = [
     "main.py",
 ]
 
+
 SYSTEM_PROMPT = """
 You are Krimoxous.AI, a local offline navigator for UQTN work sessions and state guidance.
 Use the provided UQTN context as authoritative project meaning.
@@ -51,13 +60,21 @@ Prefer plain English unless the user asks for technical detail.
 If a term exists in loaded context, use that meaning.
 If a runtime calculation is available, use it instead of guessing.
 If visual analysis is unavailable for a request, say so clearly.
+The "Available local runtime modules" list below only means these files exist on disk.
+It does NOT mean they are imported, running, tested, or integrated in any way.
+Never claim a module is "integrated," "active," or "tested" unless the user's
+message itself states that as fact. Never claim to enable, monitor, or watch
+the file system, since you have no such capability.
 """
+
 
 class ChatRequest(BaseModel):
     prompt: str
 
+
 class ChatResponse(BaseModel):
     response: str
+
 
 def read_text_file(name):
     path = BASE_DIR / name
@@ -68,6 +85,7 @@ def read_text_file(name):
     except:
         return ""
 
+
 def read_json_file(name):
     path = BASE_DIR / name
     if not path.exists():
@@ -77,6 +95,7 @@ def read_json_file(name):
     except:
         return {}
 
+
 def load_prompt_context():
     parts = [SYSTEM_PROMPT.strip()]
     for name in PROMPT_FILES:
@@ -85,18 +104,21 @@ def load_prompt_context():
             parts.append(f"[{name}]\n{text}")
     return "\n\n".join(parts)
 
+
 def load_state_context():
     state = {}
     for name in STATE_FILES:
         state[name] = read_json_file(name)
     return state
 
+
 def build_runtime_summary():
     available = []
     for name in CODE_MODULES:
         if (BASE_DIR / name).exists():
             available.append(name)
-    return "Available local runtime modules: " + ", ".join(available)
+    return "Files present on disk (not necessarily imported or running): " + ", ".join(available)
+
 
 @app.get("/")
 def root():
@@ -106,23 +128,29 @@ def root():
         "model": MODEL_NAME
     }
 
+
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     prompt_context = load_prompt_context()
     state_context = load_state_context()
     runtime_summary = build_runtime_summary()
 
+
     prompt = f"""
 {prompt_context}
 
+
 {runtime_summary}
+
 
 Current local state:
 {json.dumps(state_context, ensure_ascii=False)[:4000]}
 
+
 User: {req.prompt}
 Assistant:
 """.strip()
+
 
     payload = {
         "model": MODEL_NAME,
@@ -130,22 +158,51 @@ Assistant:
         "stream": False
     }
 
+
     try:
         async with httpx.AsyncClient(timeout=90.0) as client:
             resp = await client.post(OLLAMA_URL, json=payload)
             data = resp.json()
 
+
         if resp.status_code != 200:
             return ChatResponse(response=f"Ollama error {resp.status_code}: {data}")
+
 
         answer = (data.get("response") or "").strip()
         if not answer:
             answer = "I did not receive a usable response from the model."
 
+
         return ChatResponse(response=answer)
+
 
     except Exception as exc:
         return ChatResponse(response=f"Backend error: {exc}")
+
+
+@app.post("/api/vision")
+async def vision_endpoint(image: UploadFile):
+    image_bytes = await image.read()
+    try:
+        response = ollama.chat(
+            model=VISION_MODEL_NAME,
+            messages=[{
+                "role": "user",
+                "content": (
+                    "Describe this webcam scene in one short sentence. "
+                    "Note posture, apparent focus or fatigue, lighting, and room "
+                    "environment if visible. Do not invent details you cannot see."
+                ),
+                "images": [image_bytes]
+            }]
+        )
+        description = response["message"]["content"]
+    except Exception as exc:
+        return {"description": None, "error": str(exc)}
+
+    return {"description": description}
+
 
 if __name__ == "__main__":
     import uvicorn

@@ -40,16 +40,8 @@
       border-bottom: 1px solid #31445c;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 1.45rem;
-    }
-
-    header p {
-      margin: 6px 0 0;
-      color: #d8dee9;
-      font-size: .9rem;
-    }
+    header h1 { margin: 0; font-size: 1.45rem; }
+    header p { margin: 6px 0 0; color: #d8dee9; font-size: .9rem; }
 
     .main {
       display: grid;
@@ -72,18 +64,8 @@
       background: #162231;
     }
 
-    .section-title {
-      margin: 0 0 10px;
-      color: #88c0d0;
-      font-size: 1rem;
-    }
-
-    .mode-status {
-      margin-bottom: 10px;
-      color: #a3be8c;
-      font-size: .82rem;
-      font-weight: 700;
-    }
+    .section-title { margin: 0 0 10px; color: #88c0d0; font-size: 1rem; }
+    .mode-status { margin-bottom: 10px; color: #a3be8c; font-size: .82rem; font-weight: 700; }
 
     .webcam-container {
       margin-bottom: 14px;
@@ -102,6 +84,8 @@
       background: #111c2d;
     }
 
+    #captureCanvas { display: none; }
+
     .webcam-label {
       position: absolute;
       bottom: 4px;
@@ -115,10 +99,22 @@
       border-radius: 4px;
     }
 
-    .state-grid {
-      display: grid;
-      gap: 8px;
+    .vision-status {
+      position: absolute;
+      top: 4px;
+      left: 6px;
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      color: #a3be8c;
+      background: rgba(11, 21, 34, 0.75);
+      padding: 2px 6px;
+      border-radius: 4px;
     }
+
+    .vision-status.offline { color: #bf616a; }
+
+    .state-grid { display: grid; gap: 8px; }
 
     .state-card {
       padding: 9px 10px;
@@ -127,21 +123,12 @@
       background: #2e3440;
     }
 
-    .state-card small {
-      display: block;
-      color: #b9c4d3;
-      font-size: .75rem;
-    }
-
-    .state-card strong {
-      display: block;
-      margin-top: 2px;
-      color: #e5e9f0;
-      font-size: .94rem;
-    }
+    .state-card small { display: block; color: #b9c4d3; font-size: .75rem; }
+    .state-card strong { display: block; margin-top: 2px; color: #e5e9f0; font-size: .94rem; }
 
     .status-box,
-    .timeline-box {
+    .timeline-box,
+    .vision-box {
       margin-top: 13px;
       padding: 10px 12px;
       border-radius: 8px;
@@ -151,16 +138,16 @@
       line-height: 1.5;
     }
 
-    .timeline-box {
-      max-height: 180px;
+    .timeline-box { max-height: 180px; overflow-y: auto; }
+
+    .vision-box {
+      max-height: 120px;
       overflow-y: auto;
+      font-style: italic;
+      color: #b9c4d3;
     }
 
-    .sidebar-buttons {
-      display: grid;
-      gap: 9px;
-      margin-top: 13px;
-    }
+    .sidebar-buttons { display: grid; gap: 9px; margin-top: 13px; }
 
     button {
       padding: 10px 12px;
@@ -172,24 +159,17 @@
       cursor: pointer;
     }
 
-    button:hover {
-      background: #81a1c1;
+    button:hover { background: #81a1c1; }
+    .ghost-button { background: #35485f; }
+    .ghost-button:hover { background: #48627f; }
+    .listening { background: #bf616a !important; }
+
+    .active-toggle {
+      background: #a3be8c !important;
+      color: #1b2838 !important;
     }
 
-    .ghost-button {
-      background: #35485f;
-    }
-
-    .ghost-button:hover {
-      background: #48627f;
-    }
-
-    .listening {
-      background: #bf616a !important;
-    }
-
-    .status-note,
-    .note {
+    .status-note, .note {
       margin-top: 9px;
       color: #b9c4d3;
       font-size: .77rem;
@@ -213,14 +193,15 @@
       white-space: pre-wrap;
     }
 
-    .bot {
-      align-self: flex-start;
-      background: #2a3c52;
-    }
+    .bot { align-self: flex-start; background: #2a3c52; }
+    .user { align-self: flex-end; background: #5e81ac; }
 
-    .user {
-      align-self: flex-end;
-      background: #5e81ac;
+    .vision-note {
+      align-self: flex-start;
+      background: #1f3b3a;
+      opacity: 0.85;
+      font-style: italic;
+      font-size: .85rem;
     }
 
     .composer {
@@ -245,10 +226,7 @@
       font-size: .95rem;
     }
 
-    input:focus {
-      outline: 1px solid #88c0d0;
-      border-color: #88c0d0;
-    }
+    input:focus { outline: 1px solid #88c0d0; border-color: #88c0d0; }
 
     .state-above { color: #a3be8c; }
     .state-below { color: #bf616a; }
@@ -256,10 +234,7 @@
 
     @media (max-width: 860px) {
       .main { grid-template-columns: 1fr; }
-      .sidebar {
-        border-right: 0;
-        border-bottom: 1px solid #31445c;
-      }
+      .sidebar { border-right: 0; border-bottom: 1px solid #31445c; }
     }
 
     @media (max-width: 650px) {
@@ -282,8 +257,11 @@
       <aside class="sidebar">
         <h2 class="section-title">Navigator state</h2>
         <div class="mode-status">Autonomous offline calculation active</div>
+
         <div class="webcam-container">
           <video id="liveWebcam" autoplay playsinline muted></video>
+          <canvas id="captureCanvas"></canvas>
+          <div class="vision-status offline" id="visionStatus">VISION OFFLINE</div>
           <div class="webcam-label">OPTICAL SENSOR LIVE</div>
         </div>
 
@@ -306,14 +284,18 @@
           <button type="button" class="ghost-button" data-command="save state">Save state</button>
           <button type="button" class="ghost-button" data-command="load state">Load state</button>
           <button type="button" class="ghost-button" data-command="reset state">Reset state</button>
+          <button type="button" class="ghost-button" id="visionToggle">Vision: Off</button>
         </div>
 
         <div id="statusBox" class="status-box"></div>
+        <div id="visionBox" class="vision-box">No optical observations yet.</div>
         <div id="timelineBox" class="timeline-box"></div>
 
         <div class="status-note">
           Krimoxous.AI interprets text locally, updates the four-dimensional virtual state,
-          records history, and provides guidance connected to Ollama and UQTN.
+          records history, and provides guidance connected to Ollama and UQTN. Optical
+          observations (when Vision is on) are sent to the local backend and interpreted
+          the same way as typed messages.
         </div>
       </aside>
 
@@ -323,13 +305,13 @@
         <div class="composer">
           <div class="input-row">
             <input id="userInput" type="text" placeholder="Ask Navigator a question or describe how you feel..." />
-            <button id="voiceToggle" type="button" class="ghost-button">🎙️ Voice: Natural Human</button>
-            <button id="micButton" type="button" class="ghost-button">🎤 Speak</button>
+            <button id="voiceToggle" type="button" class="ghost-button">Voice: Natural Human</button>
+            <button id="micButton" type="button" class="ghost-button">Speak</button>
             <button id="sendButton" type="button">Send</button>
           </div>
 
           <div class="note">
-            Try: “What is the chronon period in seconds?”, “plan block 30 minutes”, “summary”, or “I feel focused and ready to code”.
+            Try: "What is the chronon period in seconds?", "plan block 30 minutes", "summary", or "I feel focused and ready to code".
           </div>
         </div>
       </section>
@@ -343,45 +325,131 @@
     const HISTORY_KEY = "krimoxous_state_history_v1";
     const PHI = 1.618033988749895;
     const API_URL = "http://127.0.0.1:8000/api/chat";
+    const VISION_API_URL = "http://127.0.0.1:8000/api/vision";
+    const VISION_INTERVAL_MS = 5000;
 
     let recognition = null;
     let listening = false;
+    let visionEnabled = false;
+    let visionTimer = null;
+    let visionBusy = false;
     let state = loadState();
     let voiceMode = "natural";
     let availableVoices = [];
 
-    function $(id) {
-      return document.getElementById(id);
-    }
-
-    function now() {
-      return Date.now();
-    }
+    function $(id) { return document.getElementById(id); }
+    function now() { return Date.now(); }
 
     async function initWebcam() {
       const videoEl = $("liveWebcam");
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
           audio: false
         });
         videoEl.srcObject = stream;
+        await new Promise(resolve => { videoEl.onloadedmetadata = () => resolve(); });
+        return true;
       } catch (err) {
         console.warn("Webcam unavailable:", err.message);
+        return false;
+      }
+    }
+
+    function captureFrameBlob() {
+      return new Promise(resolve => {
+        const video = $("liveWebcam");
+        const canvas = $("captureCanvas");
+        if (!video.videoWidth) return resolve(null);
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+        canvas.toBlob(blob => resolve(blob), "image/jpeg", 0.8);
+      });
+    }
+
+    async function sendFrameToVision() {
+      if (visionBusy) return;
+      visionBusy = true;
+      try {
+        const blob = await captureFrameBlob();
+        if (!blob) return;
+
+        const formData = new FormData();
+        formData.append("image", blob, "frame.jpg");
+
+        const res = await fetch(VISION_API_URL, { method: "POST", body: formData });
+        if (!res.ok) throw new Error(`Vision endpoint returned ${res.status}`);
+        const data = await res.json();
+        if (data.description) {
+          applyVisionObservation(data.description);
+          setVisionStatus(true);
+        }
+      } catch (err) {
+        console.warn("Vision request failed:", err.message);
+        setVisionStatus(false);
+      } finally {
+        visionBusy = false;
+      }
+    }
+
+    function applyVisionObservation(description) {
+      interpretMessage(description);
+
+      const box = $("visionBox");
+      const time = new Date().toLocaleTimeString();
+      box.textContent = `[${time}] ${description}`;
+
+      const note = document.createElement("div");
+      note.className = "message bot vision-note";
+      note.textContent = `[Optical observation] ${description}`;
+      $("messages").appendChild(note);
+      $("messages").scrollTop = $("messages").scrollHeight;
+    }
+
+    function setVisionStatus(online) {
+      const el = $("visionStatus");
+      el.textContent = online ? "VISION ACTIVE" : "VISION OFFLINE";
+      el.classList.toggle("offline", !online);
+    }
+
+    function startVisionLoop() {
+      if (visionTimer) return;
+      sendFrameToVision();
+      visionTimer = setInterval(sendFrameToVision, VISION_INTERVAL_MS);
+    }
+
+    function stopVisionLoop() {
+      if (visionTimer) {
+        clearInterval(visionTimer);
+        visionTimer = null;
+      }
+      setVisionStatus(false);
+    }
+
+    async function toggleVision() {
+      const button = $("visionToggle");
+      if (!visionEnabled) {
+        const ready = $("liveWebcam").srcObject ? true : await initWebcam();
+        if (!ready) {
+          addMessage("Camera unavailable. Check browser permissions and try again.", "bot");
+          return;
+        }
+        visionEnabled = true;
+        button.textContent = "Vision: On";
+        button.classList.add("active-toggle");
+        startVisionLoop();
+      } else {
+        visionEnabled = false;
+        button.textContent = "Vision: Off";
+        button.classList.remove("active-toggle");
+        stopVisionLoop();
       }
     }
 
     function defaultState() {
-      return {
-        env: 0.2,
-        emo: 0.2,
-        mental: 0.2,
-        phys: 0.2,
-        res: 0.2,
-        taskType: "general",
-        session: null
-      };
+      return { env: 0.2, emo: 0.2, mental: 0.2, phys: 0.2, res: 0.2, taskType: "general", session: null };
     }
 
     function clamp(value, minimum = 0, maximum = 1) {
@@ -424,22 +492,12 @@
     function logState() {
       const history = getHistory();
       const calculated = calculateState();
-
       history.push({
-        timestamp: now(),
-        env: state.env,
-        emo: state.emo,
-        ment: state.mental,
-        phys: state.phys,
-        res: state.res,
-        agency: calculated.agency,
-        merBase: calculated.merBase,
-        merPhiMultiply: calculated.merPhiMultiply,
-        merPhiDivide: calculated.merPhiDivide,
-        label: calculated.label,
-        taskType: state.taskType
+        timestamp: now(), env: state.env, emo: state.emo, ment: state.mental,
+        phys: state.phys, res: state.res, agency: calculated.agency,
+        merBase: calculated.merBase, merPhiMultiply: calculated.merPhiMultiply,
+        merPhiDivide: calculated.merPhiDivide, label: calculated.label, taskType: state.taskType
       });
-
       localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(-500)));
     }
 
@@ -452,13 +510,9 @@
       let label = "Navigator inactive";
       let cssClass = "state-none";
 
-      if (merBase >= 1) {
-        label = "Hyper-Resonant";
-        cssClass = "state-above";
-      } else if (merBase > 0) {
-        label = "Entropic";
-        cssClass = "state-below";
-      }
+      if (merBase >= 2.5) { label = "Hyper-Resonant (extreme)"; cssClass = "state-above"; }
+      else if (merBase >= 1) { label = "Hyper-Resonant"; cssClass = "state-above"; }
+      else if (merBase > 0) { label = "Entropic"; cssClass = "state-below"; }
 
       return { agency, merBase, merPhiMultiply, merPhiDivide, label, cssClass };
     }
@@ -497,8 +551,8 @@
         Agency: <strong>${calculated.agency.toFixed(4)}</strong><br>
         Resistance: <strong>${state.res.toFixed(4)}</strong><br>
         MER base: <strong>${calculated.merBase.toFixed(4)}</strong><br>
-        MER × phi: <strong>${calculated.merPhiMultiply.toFixed(4)}</strong><br>
-        MER ÷ phi: <strong>${calculated.merPhiDivide.toFixed(4)}</strong><br>
+        MER x phi: <strong>${calculated.merPhiMultiply.toFixed(4)}</strong><br>
+        MER / phi: <strong>${calculated.merPhiDivide.toFixed(4)}</strong><br>
         State: <strong class="${calculated.cssClass}">${calculated.label}</strong><br><br>
         Navigator recommendation:<br>${getAdvice(calculated)}
       `;
@@ -510,7 +564,7 @@
         ${history.length
           ? history.map(item => {
               const time = new Date(item.timestamp).toLocaleTimeString();
-              return `${time} — MER ${item.merBase.toFixed(2)} — ${item.label}`;
+              return `${time} - MER ${item.merBase.toFixed(2)} - ${item.label}`;
             }).join("<br>")
           : "No state history yet."}
       `;
@@ -530,23 +584,15 @@
       availableVoices = window.speechSynthesis.getVoices();
     }
 
-    function normalizeLang(lang) {
-      return (lang || "").toLowerCase().replace("_", "-");
-    }
+    function normalizeLang(lang) { return (lang || "").toLowerCase().replace("_", "-"); }
 
     function getPreferredEnglishVoice() {
       const englishVoices = availableVoices.filter(v => normalizeLang(v.lang).startsWith("en"));
       if (!englishVoices.length) return null;
 
       const preferredNames = [
-        "Microsoft Guy",
-        "Microsoft David",
-        "Microsoft Christopher",
-        "Microsoft Jenny",
-        "Google US English",
-        "Google UK English Male",
-        "Google UK English Female",
-        "David"
+        "Microsoft Guy", "Microsoft David", "Microsoft Christopher", "Microsoft Jenny",
+        "Google US English", "Google UK English Male", "Google UK English Female", "David"
       ];
 
       for (const name of preferredNames) {
@@ -576,10 +622,7 @@
       populateVoices();
 
       const chosenVoice = getPreferredEnglishVoice();
-      if (!chosenVoice) {
-        console.warn("No English voice available.");
-        return;
-      }
+      if (!chosenVoice) { console.warn("No English voice available."); return; }
 
       const utterance = new SpeechSynthesisUtterance(cleanSpeechText(text));
       utterance.voice = chosenVoice;
@@ -592,29 +635,25 @@
     }
 
     if ("speechSynthesis" in window) {
-      window.speechSynthesis.onvoiceschanged = function () {
-        populateVoices();
-      };
+      window.speechSynthesis.onvoiceschanged = function () { populateVoices(); };
       populateVoices();
     }
 
-    function containsAny(text, words) {
-      return words.some(word => text.includes(word));
-    }
+    function containsAny(text, words) { return words.some(word => text.includes(word)); }
 
     function interpretMessage(message) {
       const text = message.toLowerCase();
 
       const positive = {
-        env: ["quiet", "comfortable", "safe", "peaceful", "good environment", "good weather", "sunny"],
-        emo: ["happy", "calm", "confident", "excited", "motivated", "hopeful", "positive"],
-        ment: ["focused", "clear", "creative", "alert", "ready to learn", "thinking clearly"],
+        env: ["quiet", "comfortable", "safe", "peaceful", "good environment", "good weather", "sunny", "clean", "organized", "bright"],
+        emo: ["happy", "calm", "confident", "excited", "motivated", "hopeful", "positive", "smiling", "relaxed"],
+        ment: ["focused", "clear", "creative", "alert", "ready to learn", "thinking clearly", "looking at screen", "typing"],
         phys: ["energetic", "strong", "rested", "healthy", "awake", "ready to work"]
       };
 
       const negative = {
-        env: ["noise", "noisy", "crowded", "chaotic", "uncomfortable", "bad environment", "cold room", "hot room"],
-        emo: ["sad", "angry", "mad", "anxious", "worried", "stressed", "upset", "lonely", "overwhelmed", "frustrated", "annoyed"],
+        env: ["noise", "noisy", "crowded", "chaotic", "uncomfortable", "bad environment", "cold room", "hot room", "dim", "messy", "cluttered", "dark"],
+        emo: ["sad", "angry", "mad", "anxious", "worried", "stressed", "upset", "lonely", "overwhelmed", "frustrated", "annoyed", "tense", "frowning"],
         ment: ["confused", "distracted", "can't focus", "cannot focus", "brain fog", "mentally tired", "forgetful", "blocked"],
         phys: ["tired", "exhausted", "sleepy", "sick", "pain", "weak", "physically tired"]
       };
@@ -626,9 +665,7 @@
       }
 
       if (containsAny(text, ["break", "rest", "pause", "relax"])) {
-        state.res -= 0.08;
-        state.mental += 0.02;
-        state.phys += 0.02;
+        state.res -= 0.08; state.mental += 0.02; state.phys += 0.02;
       }
 
       if (containsAny(text, ["pressure", "deadline", "difficult", "hard", "struggle", "blocked"])) {
@@ -668,17 +705,16 @@
       if (text === "summary") return sessionSummary();
       if (text === "save state") return saveState();
 
-      if (text === "load state") {
-        state = loadState();
-        render();
-        return "Saved Krimoxous.AI state loaded.";
-      }
+      if (text === "load state") { state = loadState(); render(); return "Saved Krimoxous.AI state loaded."; }
 
       if (text === "reset state") return resetState();
 
       if (text === "help") {
-        return "Available commands: status report, start session, plan block 30 minutes, summary, end session, save state, load state, reset state.";
+        return "Available commands: status report, start session, plan block 30 minutes, summary, end session, save state, load state, reset state, vision on, vision off.";
       }
+
+      if (text === "vision on") { if (!visionEnabled) toggleVision(); return "Optical sensor enabled."; }
+      if (text === "vision off") { if (visionEnabled) toggleVision(); return "Optical sensor disabled."; }
 
       if (text === "status report" || text === "hi" || text === "hello") {
         render();
@@ -690,11 +726,7 @@
     }
 
     function sessionStart(minutes = null) {
-      state.session = {
-        start: now(),
-        plannedMinutes: minutes,
-        taskType: state.taskType
-      };
+      state.session = { start: now(), plannedMinutes: minutes, taskType: state.taskType };
       saveState();
       render();
 
@@ -709,8 +741,10 @@
     function sessionSummary() {
       const calculated = calculateState();
       const history = getHistory();
-      const startTime = state.session ? state.session.start : now() - 30 * 60000;
-      const sessionHistory = history.filter(item => item.timestamp >= startTime);
+      const startTime = state.session ? state.session.start : null;
+      const sessionHistory = startTime
+        ? history.filter(item => item.timestamp >= startTime)
+        : history.slice(-1);
 
       const average = sessionHistory.length
         ? sessionHistory.reduce((total, item) => total + item.merBase, 0) / sessionHistory.length
@@ -735,17 +769,10 @@ ${getAdvice(calculated)}`;
 
       const lower = text.toLowerCase().trim();
       const isCommand =
-        lower.startsWith("plan block") ||
-        lower === "start session" ||
-        lower === "end session" ||
-        lower === "summary" ||
-        lower === "save state" ||
-        lower === "load state" ||
-        lower === "reset state" ||
-        lower === "status report" ||
-        lower === "help" ||
-        lower === "hi" ||
-        lower === "hello";
+        lower.startsWith("plan block") || lower === "start session" || lower === "end session" ||
+        lower === "summary" || lower === "save state" || lower === "load state" ||
+        lower === "reset state" || lower === "status report" || lower === "help" ||
+        lower === "hi" || lower === "hello" || lower === "vision on" || lower === "vision off";
 
       if (isCommand) {
         const response = runCommand(text);
@@ -795,7 +822,7 @@ ${getAdvice(calculated)}`;
       recognizer.onstart = function () {
         listening = true;
         $("micButton").classList.add("listening");
-        $("micButton").textContent = "🎙️ Listening...";
+        $("micButton").textContent = "Listening...";
       };
 
       recognizer.onresult = function (event) {
@@ -810,7 +837,7 @@ ${getAdvice(calculated)}`;
       recognizer.onend = function () {
         listening = false;
         $("micButton").classList.remove("listening");
-        $("micButton").textContent = "🎤 Speak";
+        $("micButton").textContent = "Speak";
       };
 
       return recognizer;
@@ -830,10 +857,11 @@ ${getAdvice(calculated)}`;
 
     $("sendButton").addEventListener("click", sendMessage);
     $("micButton").addEventListener("click", toggleVoiceInput);
+    $("visionToggle").addEventListener("click", toggleVision);
 
     $("voiceToggle").addEventListener("click", function () {
       voiceMode = voiceMode === "natural" ? "synth" : "natural";
-      this.textContent = voiceMode === "natural" ? "🎙️ Voice: Natural Human" : "🤖 Voice: Synth Robot";
+      this.textContent = voiceMode === "natural" ? "Voice: Natural Human" : "Voice: Synth Robot";
       speak(voiceMode === "natural" ? "Natural human voice enabled." : "Synth robot voice enabled.");
     });
 
