@@ -2,11 +2,11 @@
 
 last_updated=2026-08-17
 node_id=uqtn-006
-title=Zetari.AI UQTN Integrated Local Navigator
+title=Krimoxous.AI UQTN Integrated Local Navigator
 focus=Connect local memory, NavigatorAgent, UQTN parallel math, zeta lattice, rotor simulation, and browser interface
 latest_update=Successfully integrated NavigatorAgent with uqtn_math.py and zeta_lattice.py; rotor simulation and file memory tests also run successfully
 latest_decision=Keep Python modules, browser code, JSON state, and plain-text memory as separate linked layers within one UQTN repository
 open_question=Complete and test the local browser-to-Python navigation bridge
-next_session=Run api_server.py, test the local navigation endpoint, and verify Zetari.AI browser integration
+next_session=Run api_server.py, test the /api/chat and /api/vision endpoints, and verify Krimoxous.AI browser integration
 task_type=software development
-tags=uqtn,zetari-ai,navigator,memory,parallel-mer,zeta-lattice,rotor,offline,session-handoff
+tags=uqtn,krimoxous-ai,navigator,memory,parallel-mer,zeta-lattice,rotor,offline,session-handoff

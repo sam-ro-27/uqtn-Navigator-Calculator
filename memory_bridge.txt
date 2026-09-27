@@ -1,11 +1,11 @@
-ZETARI.AI / UQTN MEMORY BRIDGE
+KRIMOXOUS.AI / UQTN MEMORY BRIDGE
 ==============================
 
 PROJECT
 -------
 project_name=Unified Quantum-Temporal Navigation
 project_abbreviation=UQTN
-application=Zetari.AI
+application=Krimoxous.AI
 assistant_identifier=Navigator
 theory_owner=Sam
 theory_status=Original independent framework

@@ -1,6 +1,6 @@
 {
   "project": "UQTN",
-  "application": "Zetari.AI",
+  "application": "Krimoxous.AI",
   "assistant": "Navigator",
   "owner": "Samuel Taylor Andrew Rowley",
   "root_node": "uqtn-001",
@@ -33,7 +33,7 @@
 
 {
   "project": "UQTN",
-  "application": "Zetari.AI",
+  "application": "Krimoxous.AI",
   "assistant": "Navigator",
   "python_entry": "navigator_agent.py",
   "browser_entry": "index.html",

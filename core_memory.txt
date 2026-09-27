@@ -1,6 +1,6 @@
 PROJECT=UQTN
 EXPANSION=Unified Quantum-Temporal Navigation
-APPLICATION=Zetari.AI
+APPLICATION=Krimoxous.AI
 ROLE=Science Officer
 IDENTIFIER=Navigator
 THEORY_OWNER=Sam
