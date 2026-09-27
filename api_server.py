@@ -25,6 +25,7 @@ MODEL_NAME = os.getenv("KRIMOXOUS_MODEL", "llama3.2:latest")
 VISION_MODEL_NAME = os.getenv("KRIMOXOUS_VISION_MODEL", "llava")
 BASE_DIR = Path(__file__).resolve().parent
 
+latest_vision_description = {"text": None}
 
 PROMPT_FILES = [
     "core_memory.txt",
