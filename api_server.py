@@ -22,7 +22,7 @@ app.add_middleware(
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 MODEL_NAME = os.getenv("KRIMOXOUS_MODEL", "llama3.2:latest")
-VISION_MODEL_NAME = os.getenv("KRIMOXOUS_VISION_MODEL", "llama3.2-vision")
+VISION_MODEL_NAME = os.getenv("KRIMOXOUS_VISION_MODEL", "llava")
 BASE_DIR = Path(__file__).resolve().parent
 
 
