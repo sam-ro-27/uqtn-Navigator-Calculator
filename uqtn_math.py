@@ -1,5 +1,5 @@
 """
-UQTN mathematical branch engine for Zetari.AI.
+UQTN mathematical branch engine for Krimoxous.AI.
 
 All branches use the same immutable input snapshot and are calculated
 independently. No branch feeds its result into another branch.
@@ -59,40 +59,13 @@ def calculate_branches(
     resistance = max(abs(inputs.resistance), 1e-12)
     phi = constants.phi
 
-    mer_inverse = (
-        inputs.mass
-        * inputs.energy
-        * phi
-        / resistance
-    )
+    mer_inverse = inputs.mass * inputs.energy * phi / resistance
+    mer_reciprocal_phi = inputs.mass * inputs.energy / (resistance * (1 / phi))
+    mer_standard = inputs.agency * (1.0 - inputs.resistance) * phi
+    mer_inverted = inputs.agency * (1.0 + abs(inputs.resistance)) * phi
 
-    mer_reciprocal_phi = (
-        inputs.mass
-        * inputs.energy
-        / (resistance * (1 / phi))
-    )
-
-    mer_standard = (
-        inputs.agency
-        * (1.0 - inputs.resistance)
-        * phi
-    )
-
-    mer_inverted = (
-        inputs.agency
-        * (1.0 + abs(inputs.resistance))
-        * phi
-    )
-
-    effective_resistance = inputs.resistance * cos(
-        inputs.theta - inputs.theta_critical
-    )
-
-    mer_angle = (
-        inputs.agency
-        * (1.0 - effective_resistance)
-        * phi
-    )
+    effective_resistance = inputs.resistance * cos(inputs.theta - inputs.theta_critical)
+    mer_angle = inputs.agency * (1.0 - effective_resistance) * phi
 
     return {
         "inputs": asdict(inputs),
@@ -127,28 +100,17 @@ def classify_mer(value: float) -> str:
     return "Hyper-Resonant"
 
 
-def classify_branches(
-    result: Dict[str, Any],
-) -> Dict[str, str]:
+def classify_branches(result: Dict[str, Any]) -> Dict[str, str]:
     """Return a classification for every branch."""
-    return {
-        name: classify_mer(value)
-        for name, value in result["branches"].items()
-    }
+    return {name: classify_mer(value) for name, value in result["branches"].items()}
 
 
 def demo() -> None:
-    inputs = UQTNInput(
-        mass=1.0,
-        energy=0.8,
-        resistance=0.2,
-        agency=0.8,
-    )
-
+    inputs = UQTNInput(mass=1.0, energy=0.8, resistance=0.2, agency=0.8)
     result = calculate_branches(inputs)
     labels = classify_branches(result)
 
-    print("Zetari.AI / UQTN parallel branch test")
+    print("Krimoxous.AI / UQTN parallel branch test")
     print("-" * 44)
 
     for name, value in result["branches"].items():

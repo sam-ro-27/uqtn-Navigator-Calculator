@@ -28,13 +28,7 @@
   ],
   "past_sessions": "sessions/past/",
   "current_sessions": "sessions/current/",
-  "future_sessions": "sessions/future/"
-}
-
-{
-  "project": "UQTN",
-  "application": "Krimoxous.AI",
-  "assistant": "Navigator",
+  "future_sessions": "sessions/future/",
   "python_entry": "navigator_agent.py",
   "browser_entry": "index.html",
   "javascript_entry": "main.js",

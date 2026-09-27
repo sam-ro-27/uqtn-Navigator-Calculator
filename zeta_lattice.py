@@ -268,12 +268,9 @@ class ZetaLattice:
 def main() -> None:
     """Run a local zeta-lattice smoke test."""
     lattice = ZetaLattice.init_default()
+    activations = lattice.propagate(navigator_mer=6.47213595499958)
 
-    activations = lattice.propagate(
-        navigator_mer=6.47213595499958
-    )
-
-    print("Zetari.AI / UQTN Zeta Lattice")
+    print("Krimoxous.AI / UQTN Zeta Lattice")
     print("-" * 34)
     print(f"Nodes: {len(lattice.nodes)}")
     print(f"Edges: {len(lattice.edges)}")
@@ -281,13 +278,8 @@ def main() -> None:
     print(f"Summary: {lattice.activation_summary()}")
 
     print("\nNode coordinates:")
-
     for index, node in lattice.nodes.items():
-        print(
-            f"{index}: "
-            f"zero={node.value:.6f}, "
-            f"coordinates={node.coordinates}"
-        )
+        print(f"{index}: zero={node.value:.6f}, coordinates={node.coordinates}")
 
 
 if __name__ == "__main__":

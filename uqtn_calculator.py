@@ -1,6 +1,6 @@
 # uqtn_calculator.py
 """
-Zetari.AI / UQTN Calculator
+Krimoxous.AI / UQTN Calculator
 
 Provides:
 - reusable calculation functions
@@ -21,11 +21,7 @@ from dataclasses import asdict
 from typing import Any, Dict
 
 from uqtn_core import PHI, NavigatorState, coherence_state
-from uqtn_math import (
-    UQTNInput,
-    calculate_branches,
-    classify_branches,
-)
+from uqtn_math import UQTNInput, calculate_branches, classify_branches
 
 
 def calculate_navigator_state(
@@ -70,12 +66,8 @@ def calculate_navigator_state(
         "uqtn_constants": branch_result["constants"],
         "uqtn_branches": branch_result["branches"],
         "uqtn_branch_labels": branch_labels,
-        "effective_resistance": branch_result[
-            "effective_resistance"
-        ],
-        "phi_identity_check": branch_result[
-            "phi_identity_check"
-        ],
+        "effective_resistance": branch_result["effective_resistance"],
+        "phi_identity_check": branch_result["phi_identity_check"],
     }
 
 
@@ -87,7 +79,6 @@ def print_results(result: Dict[str, Any]) -> None:
 
     print("\nRESULTS")
     print("=======")
-
     print(f"Agency: {state['agency']:.6f}")
     print(f"Resistance: {state['resistance']:.6f}")
     print(f"Phi: {PHI:.15f}")
@@ -96,19 +87,12 @@ def print_results(result: Dict[str, Any]) -> None:
 
     print("\nPARALLEL UQTN BRANCHES")
     print("======================")
-
     for name, value in branches.items():
-        print(
-            f"{name}: "
-            f"{float(value):.6f} "
-            f"[{labels[name]}]"
-        )
+        print(f"{name}: {float(value):.6f} [{labels[name]}]")
 
     print("\nEFFECTIVE RESISTANCE")
     print("====================")
-    print(
-        f"{result['effective_resistance']:.6f}"
-    )
+    print(f"{result['effective_resistance']:.6f}")
 
 
 def read_float(prompt: str, minimum: float | None = None) -> float:
@@ -116,59 +100,27 @@ def read_float(prompt: str, minimum: float | None = None) -> float:
     while True:
         try:
             value = float(input(prompt))
-
             if minimum is not None and value < minimum:
-                print(
-                    f"Enter a value greater than or equal to {minimum}."
-                )
+                print(f"Enter a value greater than or equal to {minimum}.")
                 continue
-
             return value
-
         except ValueError:
             print("Please enter a valid number.")
 
 
 def interactive_calculator() -> None:
     """Run the original interactive calculator style."""
-    print("ZETARI.AI / UQTN NAVIGATOR CALCULATOR")
+    print("KRIMOXOUS.AI / UQTN NAVIGATOR CALCULATOR")
     print("=====================================")
-    print("Enter energy domains on a 0–1 scale.")
+    print("Enter energy domains on a 0-1 scale.")
 
-    env = read_float(
-        "Environmental energy: ",
-        minimum=0.0,
-    )
-
-    emo = read_float(
-        "Emotional energy: ",
-        minimum=0.0,
-    )
-
-    ment = read_float(
-        "Mental energy: ",
-        minimum=0.0,
-    )
-
-    phys = read_float(
-        "Physical energy: ",
-        minimum=0.0,
-    )
-
-    resistance = read_float(
-        "Resistance R: ",
-        minimum=0.0001,
-    )
-
-    nav_time = read_float(
-        "Navigation time [default 0]: ",
-        minimum=0.0,
-    )
-
-    depletion_rate = read_float(
-        "Depletion rate [default 0]: ",
-        minimum=0.0,
-    )
+    env = read_float("Environmental energy: ", minimum=0.0)
+    emo = read_float("Emotional energy: ", minimum=0.0)
+    ment = read_float("Mental energy: ", minimum=0.0)
+    phys = read_float("Physical energy: ", minimum=0.0)
+    resistance = read_float("Resistance R: ", minimum=0.0001)
+    nav_time = read_float("Navigation time [default 0]: ", minimum=0.0)
+    depletion_rate = read_float("Depletion rate [default 0]: ", minimum=0.0)
 
     result = calculate_navigator_state(
         env=env,
@@ -185,14 +137,7 @@ def interactive_calculator() -> None:
 
 def demo() -> None:
     """Run a non-interactive smoke test."""
-    result = calculate_navigator_state(
-        env=0.2,
-        emo=0.2,
-        ment=0.2,
-        phys=0.2,
-        resistance=0.2,
-    )
-
+    result = calculate_navigator_state(env=0.2, emo=0.2, ment=0.2, phys=0.2, resistance=0.2)
     print_results(result)
 
 

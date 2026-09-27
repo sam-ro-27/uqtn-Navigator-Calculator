@@ -163,7 +163,7 @@ def main() -> None:
     """Run a local memory smoke test."""
     memory = FileMemory("core_memory.txt")
 
-    print("UQTN / Zetari.AI File Memory")
+    print("UQTN / Krimoxous.AI File Memory")
     print("-" * 30)
 
     print(f"PROJECT: {memory.retrieve('PROJECT')}")
