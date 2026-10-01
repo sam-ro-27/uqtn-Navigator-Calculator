@@ -144,6 +144,9 @@ async def chat(req: ChatRequest):
 {runtime_summary}
 
 
+Current optical observation (if available): {latest_vision_description["text"] or "No recent observation"}
+
+
 Current local state:
 {json.dumps(state_context, ensure_ascii=False)[:4000]}
 
@@ -199,6 +202,7 @@ async def vision_endpoint(image: UploadFile):
             }]
         )
         description = response["message"]["content"]
+        latest_vision_description["text"] = description
     except Exception as exc:
         return {"description": None, "error": str(exc)}
 
