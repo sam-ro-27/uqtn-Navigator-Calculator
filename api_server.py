@@ -26,6 +26,27 @@ VISION_MODEL_NAME = os.getenv("KRIMOXOUS_VISION_MODEL", "llava")
 BASE_DIR = Path(__file__).resolve().parent
 
 latest_vision_description = {"text": None}
+VISION_TEXT_FILE = BASE_DIR / "latest_vision.txt"
+
+
+def save_vision_text(text):
+    latest_vision_description["text"] = text
+    try:
+        VISION_TEXT_FILE.write_text(text or "", encoding="utf-8")
+    except Exception:
+        pass
+
+
+def get_vision_text():
+    text = latest_vision_description.get("text")
+    if text:
+        return text
+    try:
+        if VISION_TEXT_FILE.exists():
+            return VISION_TEXT_FILE.read_text(encoding="utf-8").strip() or None
+    except Exception:
+        pass
+    return None
 
 PROMPT_FILES = [
     "core_memory.txt",
@@ -126,7 +147,8 @@ def root():
     return {
         "status": "ok",
         "service": "Krimoxous.AI backend",
-        "model": MODEL_NAME
+        "model": MODEL_NAME,
+        "vision_patch": "v2"
     }
 
 
@@ -135,6 +157,7 @@ async def chat(req: ChatRequest):
     prompt_context = load_prompt_context()
     state_context = load_state_context()
     runtime_summary = build_runtime_summary()
+    vision_text = get_vision_text() or "No recent observation"
 
 
     prompt = f"""
@@ -144,7 +167,7 @@ async def chat(req: ChatRequest):
 {runtime_summary}
 
 
-Current optical observation (if available): {latest_vision_description["text"] or "No recent observation"}
+Current optical observation (if available): {vision_text}
 
 
 Current local state:
@@ -202,7 +225,7 @@ async def vision_endpoint(image: UploadFile):
             }]
         )
         description = response["message"]["content"]
-        latest_vision_description["text"] = description
+        save_vision_text(description)
     except Exception as exc:
         return {"description": None, "error": str(exc)}
 
