@@ -1,6 +1,6 @@
 # uqtn_core.py
 """
-Core Navigator state model for Zetari.AI / UQTN.
+Core Navigator state model for Krimoxous.AI / UQTN.
 
 This module provides:
 - NavigatorState
@@ -77,7 +77,8 @@ class NavigatorState:
         """
         Calculate the Navigator MER used by the core state engine.
 
-        MER = (Agency / Resistance) × φ
+        MER = (Mass * Energy / Resistance) ×&/ φ
+        φ is multiplied and divided simultaneously side-by-side
         """
         resistance = max(
             self.resistance,
@@ -212,7 +213,7 @@ def coherence_state(
 
 
 def build_default_state() -> NavigatorState:
-    """Create the default Zetari.AI Navigator state."""
+    """Create the default Krimoxous.AI Navigator state."""
     return NavigatorState()
 
 
@@ -220,7 +221,7 @@ def main() -> None:
     """Run a core Navigator state smoke test."""
     state = build_default_state()
 
-    print("Zetari.AI / UQTN Core")
+    print("Krimoxous.AI / UQTN Core")
     print("-" * 26)
     print(f"Agency: {state.agency:.6f}")
     print(f"Resistance: {state.resistance:.6f}")

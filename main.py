@@ -52,14 +52,14 @@ def build_memory_bridge(
     ).isoformat()
 
     bridge_lines = [
-        "ZETARI.AI / UQTN MEMORY BRIDGE",
+        "Krimoxous.AI / UQTN MEMORY BRIDGE",
         "==============================",
         "",
         "PROJECT",
         "-------",
         "project_name=Unified Quantum-Temporal Navigation",
         "project_abbreviation=UQTN",
-        "application=Zetari.AI",
+        "application=Krimoxous.AI",
         "assistant_identifier=Navigator",
         "theory_owner=Sam",
         "theory_status=Original independent framework",
@@ -115,7 +115,7 @@ def print_memory_section(
 
 def main() -> None:
     """Load memory, print it, and rebuild the bridge."""
-    print("Zetari.AI / UQTN Memory System")
+    print("Krimoxous.AI / UQTN Memory System")
     print("==============================")
 
     memory = load_project_memory(PROJECT_DIR)
