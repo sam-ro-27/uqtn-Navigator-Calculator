@@ -2,7 +2,7 @@
   "project": "UQTN",
   "application": "Krimoxous.AI",
   "assistant": "Navigator",
-  "owner": "Samuel Taylor Andrew Rowley",
+  "owner": "Sam Rowley",
   "root_node": "uqtn-001",
   "current_node": "uqtn-005",
   "theory_sources": [
