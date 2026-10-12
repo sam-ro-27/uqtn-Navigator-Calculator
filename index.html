@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,7 +9,9 @@
   <title>Krimoxous.AI — UQTN Navigator</title>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -40,8 +43,16 @@
       border-bottom: 1px solid #31445c;
     }
 
-    header h1 { margin: 0; font-size: 1.45rem; }
-    header p { margin: 6px 0 0; color: #d8dee9; font-size: .9rem; }
+    header h1 {
+      margin: 0;
+      font-size: 1.45rem;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      color: #d8dee9;
+      font-size: .9rem;
+    }
 
     .main {
       display: grid;
@@ -64,8 +75,18 @@
       background: #162231;
     }
 
-    .section-title { margin: 0 0 10px; color: #88c0d0; font-size: 1rem; }
-    .mode-status { margin-bottom: 10px; color: #a3be8c; font-size: .82rem; font-weight: 700; }
+    .section-title {
+      margin: 0 0 10px;
+      color: #88c0d0;
+      font-size: 1rem;
+    }
+
+    .mode-status {
+      margin-bottom: 10px;
+      color: #a3be8c;
+      font-size: .82rem;
+      font-weight: 700;
+    }
 
     .webcam-container {
       margin-bottom: 14px;
@@ -84,7 +105,9 @@
       background: #111c2d;
     }
 
-    #captureCanvas { display: none; }
+    #captureCanvas {
+      display: none;
+    }
 
     .webcam-label {
       position: absolute;
@@ -112,9 +135,14 @@
       border-radius: 4px;
     }
 
-    .vision-status.offline { color: #bf616a; }
+    .vision-status.offline {
+      color: #bf616a;
+    }
 
-    .state-grid { display: grid; gap: 8px; }
+    .state-grid {
+      display: grid;
+      gap: 8px;
+    }
 
     .state-card {
       padding: 9px 10px;
@@ -123,8 +151,18 @@
       background: #2e3440;
     }
 
-    .state-card small { display: block; color: #b9c4d3; font-size: .75rem; }
-    .state-card strong { display: block; margin-top: 2px; color: #e5e9f0; font-size: .94rem; }
+    .state-card small {
+      display: block;
+      color: #b9c4d3;
+      font-size: .75rem;
+    }
+
+    .state-card strong {
+      display: block;
+      margin-top: 2px;
+      color: #e5e9f0;
+      font-size: .94rem;
+    }
 
     .status-box,
     .timeline-box,
@@ -138,7 +176,10 @@
       line-height: 1.5;
     }
 
-    .timeline-box { max-height: 180px; overflow-y: auto; }
+    .timeline-box {
+      max-height: 180px;
+      overflow-y: auto;
+    }
 
     .vision-box {
       max-height: 120px;
@@ -147,7 +188,11 @@
       color: #b9c4d3;
     }
 
-    .sidebar-buttons { display: grid; gap: 9px; margin-top: 13px; }
+    .sidebar-buttons {
+      display: grid;
+      gap: 9px;
+      margin-top: 13px;
+    }
 
     button {
       padding: 10px 12px;
@@ -159,17 +204,29 @@
       cursor: pointer;
     }
 
-    button:hover { background: #81a1c1; }
-    .ghost-button { background: #35485f; }
-    .ghost-button:hover { background: #48627f; }
-    .listening { background: #bf616a !important; }
+    button:hover {
+      background: #81a1c1;
+    }
+
+    .ghost-button {
+      background: #35485f;
+    }
+
+    .ghost-button:hover {
+      background: #48627f;
+    }
+
+    .listening {
+      background: #bf616a !important;
+    }
 
     .active-toggle {
       background: #a3be8c !important;
       color: #1b2838 !important;
     }
 
-    .status-note, .note {
+    .status-note,
+    .note {
       margin-top: 9px;
       color: #b9c4d3;
       font-size: .77rem;
@@ -193,8 +250,15 @@
       white-space: pre-wrap;
     }
 
-    .bot { align-self: flex-start; background: #2a3c52; }
-    .user { align-self: flex-end; background: #5e81ac; }
+    .bot {
+      align-self: flex-start;
+      background: #2a3c52;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: #5e81ac;
+    }
 
     .vision-note {
       align-self: flex-start;
@@ -226,26 +290,58 @@
       font-size: .95rem;
     }
 
-    input:focus { outline: 1px solid #88c0d0; border-color: #88c0d0; }
+    input:focus {
+      outline: 1px solid #88c0d0;
+      border-color: #88c0d0;
+    }
 
-    .state-above { color: #a3be8c; }
-    .state-below { color: #bf616a; }
-    .state-none { color: #d08770; }
+    .state-above {
+      color: #a3be8c;
+    }
+
+    .state-below {
+      color: #bf616a;
+    }
+
+    .state-none {
+      color: #d08770;
+    }
 
     @media (max-width: 860px) {
-      .main { grid-template-columns: 1fr; }
-      .sidebar { border-right: 0; border-bottom: 1px solid #31445c; }
+      .main {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid #31445c;
+      }
     }
 
     @media (max-width: 650px) {
-      body { padding: 8px; }
-      .app { height: 97vh; }
-      .input-row { grid-template-columns: 1fr 1fr; }
-      .input-row input[type="text"] { grid-column: span 2; }
-      .message { max-width: 94%; }
+      body {
+        padding: 8px;
+      }
+
+      .app {
+        height: 97vh;
+      }
+
+      .input-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .input-row input[type="text"] {
+        grid-column: span 2;
+      }
+
+      .message {
+        max-width: 94%;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="app">
     <header>
@@ -564,9 +660,9 @@
         <strong>Recent timeline</strong><br>
         ${history.length
           ? history.map(item => {
-              const time = new Date(item.timestamp).toLocaleTimeString();
-              return `${time} - MER ${item.merBase.toFixed(2)} - ${item.label}`;
-            }).join("<br>")
+            const time = new Date(item.timestamp).toLocaleTimeString();
+            return `${time} - MER ${item.merBase.toFixed(2)} - ${item.label}`;
+          }).join("<br>")
           : "No state history yet."}
       `;
     }
@@ -785,11 +881,23 @@ ${getAdvice(calculated)}`;
       interpretMessage(text);
       const loading = addMessage("Navigator computing...", "bot");
 
+      // Elapsed-time ticker: slow responses no longer look hung.
+      const startedAt = Date.now();
+      const ticker = setInterval(() => {
+        const secs = Math.floor((Date.now() - startedAt) / 1000);
+        loading.textContent = `Navigator computing... ${secs}s`;
+      }, 1000);
+
+      // Abort if the backend takes longer than 150s (cold model + large prompt).
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 150000);
+
       try {
         const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: text })
+          body: JSON.stringify({ prompt: text }),
+          signal: controller.signal
         });
 
         const data = await res.json();
@@ -797,9 +905,16 @@ ${getAdvice(calculated)}`;
         loading.textContent = responseText;
         speak(responseText.split("\n")[0].slice(0, 180));
       } catch (err) {
-        const fallback = "Backend unavailable. Local navigator remains active.";
-        loading.textContent = fallback;
-        speak(fallback);
+        if (err.name === "AbortError") {
+          loading.textContent = "Still working after 150s \u2014 the model may be loading or the prompt is large. Wait a little longer, or send your message again.";
+        } else {
+          const fallback = "Backend unavailable. Local navigator remains active.";
+          loading.textContent = fallback;
+        }
+        speak(loading.textContent.split("\n")[0].slice(0, 180));
+      } finally {
+        clearInterval(ticker);
+        clearTimeout(timeoutId);
       }
     }
 
@@ -879,7 +994,10 @@ ${getAdvice(calculated)}`;
     state = loadState();
     render();
     initWebcam();
+    // Warm up the backend model in the background so the first real chat is fast.
+    fetch(API_URL.replace("/api/chat", "/api/warmup")).catch(() => { });
     addMessage("Navigator ready. Describe how you feel or ask an operational question to begin.", "bot");
   </script>
 </body>
+
 </html>

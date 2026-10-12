@@ -48,11 +48,12 @@ def get_vision_text():
         pass
     return None
 
+# NOTE: memory_bridge.txt already aggregates core_memory.txt,
+# active_state.txt and session_delta.txt -- listing them separately
+# duplicated ~half the prompt on every request. Keep it to the bridge.
 PROMPT_FILES = [
-    "core_memory.txt",
     "memory_bridge.txt",
     "uqtn_math.txt",
-    "session_delta.txt",
 ]
 
 
@@ -152,6 +153,24 @@ def root():
     }
 
 
+@app.get("/api/warmup")
+async def warmup():
+    """Force-load the Ollama model now so the first real chat is fast.
+    Called once by the frontend on page load (fire-and-forget)."""
+    try:
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            resp = await client.post(OLLAMA_URL, json={
+                "model": MODEL_NAME,
+                "prompt": "ok",
+                "stream": False,
+                "keep_alive": "30m",
+            })
+            warmed = resp.status_code == 200
+    except Exception:
+        warmed = False
+    return {"warmed": warmed, "model": MODEL_NAME}
+
+
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     prompt_context = load_prompt_context()
@@ -182,7 +201,8 @@ Assistant:
     payload = {
         "model": MODEL_NAME,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "keep_alive": "30m",
     }
 
 
