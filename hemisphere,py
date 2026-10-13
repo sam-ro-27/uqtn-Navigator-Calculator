@@ -1,0 +1,83 @@
+"""
+hemisphere.py — base class for the cognitive hemispheres.
+
+GIVEN: left and right hemispheres form the cognitive layer.
+"""
+
+
+class Hemisphere:
+    """
+    One cognitive hemisphere.
+
+    A hemisphere receives one chiral component of each DiracPacket,
+    processes it according to its duty, and reports throughput for the
+    continuity ledger.
+
+    Subclasses define the duty:
+      LeftHemisphere  -> analytic  (text, logic, sequence)
+      RightHemisphere -> holistic  (vision, pattern, whole-scene)
+    """
+
+    side = "undefined"
+    duty = "undefined"
+
+    def __init__(self, model=None):
+        self.model = model
+        self.processed = 0       # packets processed (continuity count)
+        self.last_result = None  # most recent output, for coupling
+
+    def process(self, component):
+        """
+        Process one chiral component. Returns a result dict.
+
+        Base implementation is pass-through; subclasses override
+        with their cognitive duty. Always increments the continuity
+        counter so the ledger stays balanced.
+        """
+        self.processed += 1
+        self.last_result = {
+            "side": self.side,
+            "duty": self.duty,
+            "model": self.model,
+            "input": component,
+            "output": component,
+        }
+        return self.last_result
+
+    def stats(self):
+        return {
+            "side": self.side,
+            "duty": self.duty,
+            "model": self.model,
+            "processed": self.processed,
+        }
+def main():
+    # Example usage of Hemisphere class
+    left_hemisphere = Hemisphere(model="llama3.2:latest")
+    right_hemisphere = Hemisphere(model="llava")
+
+    # Simulate processing a DiracPacket
+    packet = {
+        "left": {"text": "Analyze this sentence."},
+        "right": {"image": b"\x89PNG..."},
+    }
+
+    left_result = left_hemisphere.process(packet["left"])
+    right_result = right_hemisphere.process(packet["right"])
+
+    print("Left Hemisphere Result:", left_result)
+    print("Right Hemisphere Result:", right_result)
+    print("Left Hemisphere Stats:", left_hemisphere.stats())
+    print("Right Hemisphere Stats:", right_hemisphere.stats())
+    
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    main()
+
+# end main
