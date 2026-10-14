@@ -1,3 +1,4 @@
+# pyright: reportMissingImports=false
 from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -6,6 +7,55 @@ import os
 import ollama
 from pathlib import Path
 import json
+import sys
+BASE_DIR = Path(__file__).resolve().parent
+
+# ----------------------------------------------------------------------
+# Dirac Internet Central — merged hub (user: "just merge them")
+# Tries, in order: (1) dirac_internet_central/ package beside this file,
+# (2) the 15 modules as flat .py files beside this file (his layout),
+# (3) graceful degradation when neither is present.
+# NOTE: in the flat layout, hemisphere_py.bin must be renamed to
+# hemisphere.py for the relative imports to resolve.
+# ----------------------------------------------------------------------
+def _load_dirac():
+    # (1) Proper package layout.
+    try:
+        from dirac_internet_central import (
+            DiracInternetCentral,
+            fluid_state_snapshot,
+        )
+        try:
+            from dirac_internet_central import dirac_router as _router
+        except Exception:
+            _router = None
+        return DiracInternetCentral, fluid_state_snapshot, _router, "package"
+    except ImportError:
+        pass
+
+    # (2) Flat layout: synthesize the package from loose modules so the
+    # relative imports inside them (from .config import ...) resolve.
+    try:
+        import types
+        pkg = types.ModuleType("dirac_internet_central")
+        pkg.__path__ = [str(BASE_DIR)]
+        sys.modules["dirac_internet_central"] = pkg
+        from dirac_internet_central.central import DiracInternetCentral
+        from dirac_internet_central.state import fluid_state_snapshot
+        try:
+            from dirac_internet_central.api import router as _router
+        except Exception:
+            _router = None
+        # Verify the key modules actually resolved (hemisphere.py!).
+        from dirac_internet_central import hemisphere as _hem_check  # noqa
+        return DiracInternetCentral, fluid_state_snapshot, _router, "flat"
+    except Exception:
+        sys.modules.pop("dirac_internet_central", None)
+        return None, None, None, "missing"
+
+
+DiracInternetCentral, fluid_state_snapshot, _dirac_router, _dirac_layout = _load_dirac()
+_HAVE_DIRAC = DiracInternetCentral is not None
 
 
 app = FastAPI(title="Krimoxous.AI Backend")
@@ -19,11 +69,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Dirac hub: one shared instance for the merged server.
+dirac_hub = DiracInternetCentral() if _HAVE_DIRAC else None
+if _dirac_router is not None and dirac_hub is not None:
+    try:
+        _dirac_router.hub = dirac_hub
+        app.include_router(_dirac_router)
+    except Exception:
+        pass
+
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 MODEL_NAME = os.getenv("KRIMOXOUS_MODEL", "llama3.2:latest")
 VISION_MODEL_NAME = os.getenv("KRIMOXOUS_VISION_MODEL", "llava")
-BASE_DIR = Path(__file__).resolve().parent
 
 latest_vision_description = {"text": None}
 VISION_TEXT_FILE = BASE_DIR / "latest_vision.txt"
@@ -99,6 +157,17 @@ class ChatResponse(BaseModel):
     response: str
 
 
+class DiracChatRequest(BaseModel):
+    prompt: str
+    image: str = ""
+
+
+class DiracChatResponse(BaseModel):
+    response: str
+    fused: dict = {}
+    continuity_holds: bool = True
+
+
 def read_text_file(name):
     path = BASE_DIR / name
     if not path.exists():
@@ -149,7 +218,8 @@ def root():
         "status": "ok",
         "service": "Krimoxous.AI backend",
         "model": MODEL_NAME,
-        "vision_patch": "v2"
+        "vision_patch": "v2",
+        "dirac": (_dirac_layout if dirac_hub is not None else "missing"),
     }
 
 
@@ -228,6 +298,70 @@ Assistant:
         return ChatResponse(response=f"Backend error: {exc}")
 
 
+@app.post("/api/dirac/chat", response_model=DiracChatResponse)
+def dirac_chat(req: DiracChatRequest):
+    """Chat through the Dirac hub: prompt -> chiral split -> hemispheres
+    -> corpus callosum fusion -> composed reply. Merged from dirac_server."""
+    if dirac_hub is None:
+        return DiracChatResponse(
+            response="Dirac hub not loaded: dirac_internet_central/ folder missing.",
+            continuity_holds=False,
+        )
+    try:
+        result = dirac_hub.cycle({"text": req.prompt, "image": req.image})
+        fused = result["fused"]
+        return DiracChatResponse(
+            response=_compose_dirac_reply(fused),
+            fused=fused,
+            continuity_holds=result["continuity_holds"],
+        )
+    except Exception as exc:
+        return DiracChatResponse(
+            response=f"Dirac hub error: {exc}",
+            continuity_holds=False,
+        )
+
+
+@app.post("/api/dirac/ingest")
+def dirac_ingest(payload: dict):
+    """Raw internet information -> one hub cycle."""
+    if dirac_hub is None:
+        return {"error": "Dirac hub not loaded"}
+    try:
+        return dirac_hub.cycle(payload)
+    except Exception as exc:
+        return {"error": str(exc)}
+
+
+@app.get("/api/dirac/state")
+def dirac_state():
+    """Fluid snapshot: density, current, continuity, throughput."""
+    if dirac_hub is None or fluid_state_snapshot is None:
+        return {"error": "Dirac hub not loaded"}
+    return fluid_state_snapshot(dirac_hub)
+
+
+def _compose_dirac_reply(fused):
+    """INTERPRETIVE: fuse the two hemisphere readings into prose."""
+    analytic = (fused.get("analytic") or {})
+    holistic = (fused.get("holistic") or {})
+    parts = []
+    analysis = analytic.get("analysis", {})
+    if analysis:
+        parts.append(
+            "Left reading (analytic): "
+            f"{analysis.get('words', 0)} words, "
+            f"{len(analytic.get('terms', []))} salient terms."
+        )
+    impression = holistic.get("impression", {})
+    if impression:
+        parts.append(
+            "Right reading (holistic): "
+            f"{impression.get('count', 0)} elements present."
+        )
+    parts.append(fused.get("fused_note", ""))
+    return " ".join(p for p in parts if p)
+
 @app.post("/api/vision")
 async def vision_endpoint(image: UploadFile):
     image_bytes = await image.read()
@@ -254,4 +388,8 @@ async def vision_endpoint(image: UploadFile):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    HOST = os.getenv("KRIMOXOUS_HOST", "0.0.0.0")
+    PORT = int(os.getenv("KRIMOXOUS_PORT", "8000"))
+    # 0.0.0.0 = internet-reachable (his requirement, token-free).
+    # Set KRIMOXOUS_HOST=127.0.0.1 to go back to local-only.
+    uvicorn.run(app, host=HOST, port=PORT)
